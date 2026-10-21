@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>ChotuGTT – Restaurant Management Platform</title>
+    <meta name="description"
+        content="Manage orders, tables, billing, menu items and daily restaurant operations from one platform with ChotuGTT.">
+    <meta property="og:title" content="ChotuGTT – Restaurant Management Platform">
+    <meta property="og:description" content="Orders, tables, billing and menu management in one place.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { head: ['"Plus Jakarta Sans"', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+                    colors: { brand: 'var(--brand)', bg: 'var(--bg)', card: 'var(--card)', fg: 'var(--fg)', mut: 'var(--mut)', line: 'var(--line)', soft: 'var(--soft)' }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Replace these tokens with ChotuGTT's existing design tokens */
+        :root {
+            --brand: #e4572e;
+            --brandfg: #fff;
+            --bg: #fafaf7;
+            --card: #fff;
+            --fg: #17181c;
+            --mut: #5d6270;
+            --line: #e6e6e0;
+            --soft: #f1f1ec;
+            --ok: #1f9d63;
+            --warn: #d98a0b;
+            --info: #2f6fd6;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root:not([data-theme=light]) {
+                --brand: #f0693f;
+                --bg: #111215;
+                --card: #1a1c21;
+                --fg: #f2f2ee;
+                --mut: #a3a8b5;
+                --line: #2b2e36;
+                --soft: #22252b
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+            height: auto
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: Inter, sans-serif;
+            overflow-x: hidden
+        }
+
+        h1,
+        h2,
+        h3,
+        .fh {
+            font-family: 'Plus Jakarta Sans', sans-serif
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            min-height: 44px;
+            padding: .65rem 1.25rem;
+            border-radius: .75rem;
+            font-weight: 600;
+            font-size: .95rem;
+            transition: transform .15s, background .15s, box-shadow .15s
+        }
+
+        .btn:active {
+            transform: scale(.97)
+        }
+
+        .btn-p {
+            background: var(--brand);
+            color: var(--brandfg)
+        }
+
+        .btn-p:hover {
+            box-shadow: 0 6px 18px -6px var(--brand)
+        }
+
+        .btn-s {
+            background: var(--card);
+            border: 1px solid var(--line)
+        }
+
+        .btn-s:hover {
+            background: var(--soft)
+        }
+
+        .btn[aria-disabled=true] {
+            opacity: .55;
+            cursor: not-allowed;
+            pointer-events: none
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1rem
+        }
+
+        .rv {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity .5s, transform .5s
+        }
+
+        .rv.in {
+            opacity: 1;
+            transform: none
+        }
+
+        .faq-a {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows .25s
+        }
+
+        .faq-a>div {
+            overflow: hidden
+        }
+
+        .faq-open .faq-a {
+            grid-template-rows: 1fr
+        }
+
+        .faq-open .chev {
+            transform: rotate(180deg)
+        }
+
+        .chev {
+            transition: transform .25s
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            * {
+                transition: none !important;
+                animation: none !important;
+                scroll-behavior: auto !important
+            }
+
+            .rv {
+                opacity: 1;
+                transform: none
+            }
+        }
+
+        .pill {
+            font-size: .7rem;
+            font-weight: 600;
+            padding: .15rem .5rem;
+            border-radius: 999px
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="ann" class="text-center text-sm py-2 px-10 relative" style="background:var(--fg);color:var(--bg)">
+        Manage your restaurant smarter with ChotuGTT.
+        <button id="annx" aria-label="Dismiss announcement"
+            class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-lg leading-none">×</button>
+    </div>
+
+    <header class="sticky top-0 z-40 border-b border-line"
+        style="background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)">
+        <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between" aria-label="Main">
+            <a href="#top" class="flex items-center gap-2 fh font-extrabold text-lg"><span
+                    class="w-8 h-8 rounded-lg grid place-items-center text-white text-sm"><img
+                        src="./img/ChotuGTT__1_-removebg-preview.png" alt="chotugtt"></span>ChotuGTT</a>
+            <ul id="links" class="hidden md:flex items-center gap-7 text-sm font-medium text-mut"></ul>
+            <div class="hidden md:flex items-center gap-3">
+                <a data-cfg="login" class="text-sm font-semibold px-3 py-2">Login</a>
+                <a data-cfg="register" class="btn btn-p">Get Started</a>
+            </div>
+            <button id="burger" class="md:hidden w-11 h-11 grid place-items-center rounded-lg border border-line"
+                aria-label="Open menu" aria-expanded="false" aria-controls="mnav">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 6h16M3 11h16M3 16h16" />
+                </svg>
+            </button>
+        </nav>
+        <div id="mnav" class="hidden md:hidden border-t border-line px-4 py-3 space-y-1" style="background:var(--bg)">
+            <div id="mlinks"></div>
+            <div class="grid grid-cols-2 gap-3 pt-3"><a data-cfg="login" class="btn btn-s">Login</a><a
+                    data-cfg="register" class="btn btn-p">Get Started</a></div>
+        </div>
+    </header>
+
+    <main id="top">
+        <!-- HERO -->
+        <section class="max-w-6xl mx-auto px-4 pt-12 pb-16 md:pt-20 grid lg:grid-cols-2 gap-12 items-center">
+            <div>
+                <p class="inline-block pill bg-soft text-mut mb-4" style="background:var(--soft)">Restaurant Management
+                    Platform</p>
+                <h1 class="text-4xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight">Run Your Restaurant. Not
+                    the Chaos.</h1>
+                <p class="mt-5 text-lg text-mut max-w-xl">Manage orders, tables, billing, menu items and daily
+                    restaurant operations with ChotuGTT—built to help your team work smarter and serve customers faster.
+                </p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                    <a data-cfg="register" class="btn btn-p">Get Started</a>
+                    <a href="#features" class="btn btn-s">Explore Features</a>
+                </div>
+                <p class="mt-5 text-sm text-mut">Built for everyday restaurant operations.</p>
+            </div>
+            <div id="heromock" class="rv"></div>
+        </section>
+
+        <!-- FEATURES -->
+        <section id="features" class="py-16" style="background:var(--soft)">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Everything your floor and counter
+                        need</h2>
+                    <p class="mt-3 text-mut">One platform for the daily work of running a restaurant or café. Feature
+                        availability may vary by plan.</p>
+                </div>
+                <div id="fgrid" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- HOW -->
+        <section id="how" class="py-16 max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">How ChotuGTT Works</h2>
+            <div id="steps" class="mt-10 grid md:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- PRODUCT / OWNER -->
+        <section id="product" class="py-16" style="background:var(--soft)">
+            <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-5 gap-10 items-center">
+                <div class="lg:col-span-2">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Stay in Control of Your Restaurant.
+                    </h2>
+                    <p class="mt-4 text-mut">Live orders, table monitoring, billing and payments, menu management and a
+                        sales overview—together in one owner dashboard.</p>
+                    <ul class="mt-5 space-y-2 text-sm" id="ownerlist"></ul>
+                    <a data-cfg="login" class="btn btn-p mt-7">Access Restaurant Dashboard</a>
+                </div>
+                <div class="lg:col-span-3" id="ownmock"></div>
+            </div>
+        </section>
+
+        <!-- CAPTAIN -->
+        <section id="captain" class="py-16 max-w-6xl mx-auto px-4">
+            <div class="max-w-2xl">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Your Service Team, Connected.</h2>
+                <p class="mt-3 text-mut">Help your captain and service staff manage table orders and restaurant
+                    workflows from their Android device.</p>
+            </div>
+            <div class="mt-10 grid md:grid-cols-2 gap-5">
+                <article class="card p-6 flex flex-col">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-4" style="background:var(--soft)"
+                        data-ic="store"></div>
+                    <h3 class="text-xl font-bold">Restaurant Owner Panel</h3>
+                    <p class="mt-2 text-mut flex-1">Manage restaurant operations, orders, menu, billing and staff from
+                        the web dashboard.</p>
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3"><a data-cfg="login" class="btn btn-p">Open Owner
+                            Login</a><a data-cfg="register" class="btn btn-s">Get Started</a></div>
+                </article>
+                <article class="card p-6 flex flex-col">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-4" style="background:var(--soft)"
+                        data-ic="phone"></div>
+                    <h3 class="text-xl font-bold">ChotuGTT Captain App</h3>
+                    <p class="mt-2 text-mut">Give your service staff a convenient mobile workflow for handling assigned
+                        restaurant orders and table service.</p>
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        <a id="apkbtn" class="btn btn-p"></a><a id="capLogin" data-cfg="captainLogin"
+                            class="btn btn-s">Open Captain Login</a>
+                    </div>
+                    <div id="qrwrap" class="hidden mt-6 items-center gap-4">
+                        <div id="qr" class="p-2 bg-white rounded-lg"></div>
+                        <p class="text-sm text-mut">Scan to download on your Android device.</p>
+                    </div>
+                    <p class="mt-4 text-xs text-mut">Download the APK on your Android device and follow the installation
+                        instructions shown by your device.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- WORKFLOW -->
+        <section class="py-16" style="background:var(--soft)">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">From order to payment, in one flow</h2>
+                <ol id="flow" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-5 gap-4"></ol>
+                <p class="mt-4 text-xs text-mut">Payments are recorded by your team; opening a UPI link is not treated
+                    as verified payment.</p>
+            </div>
+        </section>
+
+        <!-- BENEFITS -->
+        <section class="py-16 max-w-6xl mx-auto px-4">
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Practical benefits for daily service</h2>
+            <div id="ben" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="py-16" style="background:var(--soft)">
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-center">Frequently asked questions
+                </h2>
+                <div id="faqlist" class="mt-10 space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="py-16 max-w-6xl mx-auto px-4">
+            <div class="rounded-3xl px-6 py-14 text-center" style="background:var(--fg);color:var(--bg)">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Make Your Restaurant Operations Simpler.
+                </h2>
+                <p class="mt-3 opacity-75 max-w-xl mx-auto">Explore ChotuGTT and bring your restaurant workflows into
+                    one organized platform.</p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                    <a data-cfg="register" class="btn btn-p">Get Started</a>
+                    <a data-cfg="login" class="btn" style="background:transparent;border:1px solid currentColor">Access
+                        Owner Panel</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-line">
+        <div class="max-w-6xl mx-auto px-4 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
+            <div class="lg:col-span-2"><a href="#top" class="flex items-center gap-2 fh font-extrabold text-lg"><span
+                        class="w-8 h-8 rounded-lg grid place-items-center text-white text-sm">
+                        <img src="./img/ChotuGTT__1_-removebg-preview.png" alt="chotugtt">
+                    </span>ChotuGTT</a>
+                <p class="mt-3 text-mut max-w-sm">Restaurant management software for orders, tables, billing and menus.
+                </p>
+            </div>
+            <div>
+                <h3 class="font-bold mb-3">Product</h3>
+                <ul class="space-y-2 text-mut">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how">How It Works</a></li>
+                    <li><a href="#captain">Captain App</a></li>
+                    <li><a data-cfg="login">Owner Login</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-3">Company</h3>
+                <ul id="flinks" class="space-y-2 text-mut"></ul>
+            </div>
+        </div>
+        <p class="text-center text-xs text-mut pb-8">© <span id="yr"></span> ChotuGTT. All rights reserved.</p>
+    </footer>
+
+    <script>
+        /* ===== CONFIG: fill with real values. Empty = hidden / "coming soon" ===== */
+        const CFG = {
+            login: 'https://chotu-frontend-ngph.onrender.com/',            // owner login route e.g. '/login'
+            register: 'https://chotu-frontend-ngph.onrender.com/',         // registration route e.g. '/register'
+            captainLogin: '',     // captain login route, optional
+            apkUrl: 'https://expo.dev/accounts/raju005/projects/captain-app/builds/25829aac-479a-465b-8443-23094ae79b02',           // public APK URL (e.g. VITE_CAPTAIN_APK_URL)
+            contactEmail: 'chotupro.official@gmail.com',     // real contact email
+            privacyUrl: '',       // real privacy page
+            termsUrl: ''          // real terms page
+        };
+        const $ = s => document.querySelector(s);
+        const IC = {
+            list: 'M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01',
+            bill: 'M6 2h12v20l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6',
+            grid: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
+            menu: 'M4 4h16v4H4zM4 12h10M4 16h10M4 20h10',
+            user: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0',
+            pay: 'M2 6h20v12H2zM2 10h20M6 15h4',
+            tag: 'M3 12V3h9l9 9-9 9zM7.5 7.5h.01',
+            chart: 'M4 20V10M10 20V4M16 20v-8M22 20H2',
+            gear: 'M12 15a3 3 0 100-6 3 3 0 000 6zM19 12l2-1-2-4-2 1-2-1V5H9v2L7 8 5 7 3 11l2 1v2l-2 1 2 4 2-1 2 1v2h6v-2l2-1 2 1 2-4-2-1z',
+            store: 'M3 9l2-5h14l2 5M4 9v11h16V9M9 20v-6h6v6',
+            phone: 'M7 2h10v20H7zM11 18h2',
+            check: 'M5 12l5 5 9-10',
+            chev: 'M6 9l6 6 6-6'
+        };
+        const ic = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
+        document.querySelectorAll('[data-ic]').forEach(e => e.innerHTML = ic(e.dataset.ic, 24));
+
+        const NAV = [['Product', '#product'], ['Features', '#features'], ['How It Works', '#how'], ['Captain App', '#captain'], ['FAQ', '#faq']];
+        $('#links').innerHTML = NAV.map(([t, h]) => `<li><a class="hover:text-fg transition-colors py-2" href="${h}">${t}</a></li>`).join('');
+        $('#mlinks').innerHTML = NAV.map(([t, h]) => `<a class="block py-3 font-medium" href="${h}">${t}</a>`).join('');
+        const burger = $('#burger'), mnav = $('#mnav');
+        burger.onclick = () => { const o = mnav.classList.toggle('hidden') === false; burger.setAttribute('aria-expanded', o) };
+        mnav.addEventListener('click', e => { if (e.target.closest('a')) { mnav.classList.add('hidden'); burger.setAttribute('aria-expanded', false) } });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !mnav.classList.contains('hidden')) { mnav.classList.add('hidden'); burger.setAttribute('aria-expanded', false); burger.focus() } });
+        $('#annx').onclick = () => $('#ann').remove();
+
+        /* route wiring */
+        document.querySelectorAll('[data-cfg]').forEach(a => {
+            const u = CFG[a.dataset.cfg];
+            if (u) { a.href = u } else { a.href = '#'; a.setAttribute('aria-disabled', 'true'); if (a.dataset.cfg === 'captainLogin') a.style.display = 'none'; a.addEventListener('click', e => e.preventDefault()) }
+        });
+        document.querySelectorAll('a[data-cfg][aria-disabled]').forEach(a => { if (!a.classList.contains('btn')) a.style.opacity = .5 });
+
+        /* APK */
+        const apk = $('#apkbtn');
+        if (CFG.apkUrl) {
+            apk.href = CFG.apkUrl; apk.setAttribute('download', ''); apk.textContent = 'Download Captain APK';
+            try { new QRCode($('#qr'), { text: CFG.apkUrl, width: 104, height: 104 }); $('#qrwrap').classList.remove('hidden'); $('#qrwrap').classList.add('flex') } catch (e) { }
+        } else {
+            apk.href = '#'; apk.setAttribute('aria-disabled', 'true'); apk.textContent = 'APK Coming Soon';
+            apk.addEventListener('click', e => e.preventDefault());
+        }
+
+        /* Mock dashboards (illustrative sample data) */
+        const orders = [['#1042', 'Table 4', 'Preparing', 'warn'], ['#1043', 'Table 7', 'New', 'info'], ['#1044', 'Takeaway', 'Ready', 'ok']];
+        const tables = [['1', 'ok'], ['2', 'warn'], ['3', 'ok'], ['4', 'warn'], ['5', 'ok'], ['6', 'ok'], ['7', 'info'], ['8', 'ok']];
+        const col = k => `color:var(--${k});background:color-mix(in srgb,var(--${k}) 14%,transparent)`;
+        const mock = (big) => `<div class="card p-4 sm:p-5 shadow-xl" style="box-shadow:0 24px 60px -30px rgba(0,0,0,.35)" role="img" aria-label="Illustrative ChotuGTT dashboard preview with sample data">
+ <div class="flex items-center justify-between mb-4"><p class="fh font-bold">Today’s overview</p><span class="pill" style="background:var(--soft);color:var(--mut)">Sample data</span></div>
+ <div class="grid grid-cols-3 gap-2 mb-4">
+  ${[['Orders', '24'], ['Active tables', '5/8'], ['Sales', '₹18,450']].map(([a, b]) => `<div class="rounded-xl p-3" style="background:var(--soft)"><p class="text-[11px] text-mut">${a}</p><p class="fh font-bold text-base sm:text-lg truncate">${b}</p></div>`).join('')}
+ </div>
+ <div class="grid ${big ? 'sm:grid-cols-2' : ''} gap-4">
+  <div><p class="text-xs font-semibold text-mut mb-2">Live orders</p><div class="space-y-2">
+  ${orders.map(o => `<div class="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm"><span><b>${o[0]}</b> <span class="text-mut">· ${o[1]}</span></span><span class="pill" style="${col(o[3])}">${o[2]}</span></div>`).join('')}</div></div>
+  <div><p class="text-xs font-semibold text-mut mb-2">Tables</p><div class="grid grid-cols-4 gap-2">
+  ${tables.map(t => `<div class="aspect-square rounded-lg grid place-items-center text-sm font-bold" style="${col(t[1])}">${t[0]}</div>`).join('')}</div>
+  ${big ? `<div class="mt-3 rounded-lg border border-line p-3 text-sm flex justify-between"><span class="text-mut">Bill · Table 4</span><b>₹1,240</b></div>` : ''}</div>
+ </div></div>`;
+        $('#heromock').innerHTML = mock(false); $('#ownmock').innerHTML = mock(true);
+        $('#ownerlist').innerHTML = ['Live orders', 'Table monitoring', 'Billing and payments', 'Menu management', 'Sales overview'].map(t => `<li class="flex gap-2 items-center"><span class="text-brand">${ic('check', 18)}</span>${t}</li>`).join('');
+
+        const F = [['list', 'Live Order Management', 'Track new, preparing and ready orders as they move through your restaurant.'],
+        ['bill', 'Billing and POS', 'Generate bills quickly and keep billing organized for dine-in and takeaway.'],
+        ['grid', 'Table Management', 'See which tables are occupied or free at a glance.'],
+        ['menu', 'Menu and Product Management', 'Update items, categories and prices from one place.'],
+        ['user', 'Captain Workflow', 'Let service staff handle assigned orders from their Android device.'],
+        ['pay', 'Payment Tracking', 'Record and review payments against each bill.'],
+        ['tag', 'Offers and Discounts', 'Set up offers and apply discounts at billing time.'],
+        ['chart', 'Sales Analytics', 'Review available sales information to understand your business.'],
+        ['gear', 'Settings and Staff', 'Configure your restaurant and manage staff access.']];
+        $('#fgrid').innerHTML = F.map(([i, t, d]) => `<article class="card p-5 rv hover:-translate-y-1 hover:shadow-lg transition"><div class="w-10 h-10 rounded-xl grid place-items-center mb-4 text-brand" style="background:color-mix(in srgb,var(--brand) 12%,transparent)">${ic(i)}</div><h3 class="font-bold">${t}</h3><p class="mt-1.5 text-sm text-mut">${d}</p></article>`).join('');
+
+        const S = [['Set up your restaurant and menu', 'Add your restaurant details, categories and menu items.'], ['Manage orders, tables and billing', 'Run daily operations from the restaurant dashboard.'], ['Coordinate service staff', 'Use the Captain app to keep table service in sync.']];
+        $('#steps').innerHTML = S.map(([t, d], i) => `<div class="card p-6 rv"><div class="w-9 h-9 rounded-full bg-brand text-white grid place-items-center fh font-bold mb-4">${i + 1}</div><h3 class="font-bold text-lg">${t}</h3><p class="mt-2 text-mut text-sm">${d}</p></div>`).join('');
+
+        const W = [['New Order', 'Order is placed'], ['Preparation', 'Track order status'], ['Captain Service', 'Staff serves the table'], ['Bill Generation', 'Bill is created'], ['Payment', 'Payment is recorded']];
+        $('#flow').innerHTML = W.map(([t, d], i) => `<li class="card p-4 rv"><span class="pill" style="background:var(--soft);color:var(--mut)">Step ${i + 1}</span><p class="fh font-bold mt-2">${t}</p><p class="text-sm text-mut">${d}</p></li>`).join('');
+
+        const B = ['Keep orders organized', 'Simplify restaurant billing', 'Improve coordination between staff', 'Monitor table activity', 'Manage menus from one place', 'Review available sales information'];
+        $('#ben').innerHTML = B.map(t => `<div class="card p-5 flex gap-3 items-center rv"><span class="text-brand shrink-0">${ic('check')}</span><p class="font-semibold">${t}</p></div>`).join('');
+
+        const Q = [['What is ChotuGTT?', 'ChotuGTT is a restaurant management platform for handling orders, tables, billing and menu management from one place.'],
+        ['Which types of restaurants can use ChotuGTT?', 'It is designed for restaurants, cafés and other small and medium-sized food businesses.'],
+        ['How can a restaurant owner get started?', 'Use the “Get Started” button to register, then set up your restaurant and menu from the dashboard.'],
+        ['What is the Captain app used for?', 'Captains and service staff use it on Android to handle assigned orders and table service.'],
+        ['How can I download the Captain APK?', 'Use the “Download Captain APK” button in the Captain section when it is available, then follow your device’s installation prompts.'],
+        ['Can I use ChotuGTT from a mobile device?', 'The owner dashboard is a web app and the layout adapts to mobile screens. The Captain app is for Android.'],
+        ['How can I contact the ChotuGTT team?', 'Use the contact link in the footer once contact details are published.']];
+        $('#faqlist').innerHTML = Q.map(([q, a], i) => `<div class="card faq">
+<h3><button class="w-full flex justify-between items-center gap-4 text-left p-4 font-semibold min-h-[52px]" aria-expanded="false" aria-controls="fa${i}" id="fq${i}">${q}<span class="chev shrink-0">${ic('chev', 20)}</span></button></h3>
+<div class="faq-a" id="fa${i}" role="region" aria-labelledby="fq${i}"><div><p class="px-4 pb-4 text-mut text-sm">${a}</p></div></div></div>`).join('');
+        $('#faqlist').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const c = b.closest('.faq'), o = c.classList.toggle('faq-open'); b.setAttribute('aria-expanded', o) });
+
+        /* footer links: only real ones */
+        const fl = [];
+        if (CFG.contactEmail) fl.push(`<li><a href="mailto:${CFG.contactEmail}">Contact Us</a></li>`);
+        if (CFG.privacyUrl) fl.push(`<li><a href="${CFG.privacyUrl}">Privacy Policy</a></li>`);
+        if (CFG.termsUrl) fl.push(`<li><a href="${CFG.termsUrl}">Terms and Conditions</a></li>`);
+        $('#flinks').innerHTML = fl.join('') || '<li>Contact details coming soon.</li>';
+        $('#yr').textContent = new Date().getFullYear();
+
+        /* reveal */
+        const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: .12 });
+        document.querySelectorAll('.rv').forEach(el => io.observe(el));
+    </script>
+</body>
+
+</html>
