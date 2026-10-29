@@ -184,7 +184,7 @@
         .ambient-grid {
             position: absolute;
             inset: 0;
-            background-image: 
+            background-image:
                 radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--fg) 4%, transparent) 1px, transparent 0);
             background-size: 28px 28px;
             pointer-events: none;
@@ -360,7 +360,7 @@
         .iso-floor {
             position: absolute;
             inset: -40px;
-            background-image: 
+            background-image:
                 linear-gradient(to right, color-mix(in srgb, var(--fg) 5%, transparent) 1px, transparent 1px),
                 linear-gradient(to bottom, color-mix(in srgb, var(--fg) 5%, transparent) 1px, transparent 1px);
             background-size: 30px 30px;
@@ -418,15 +418,12 @@
 
         /* 3D Stations in Viewport */
         .station-box {
-            position: absolute;
-            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            transition: filter 0.5s ease;
             pointer-events: auto;
         }
 
-        /* Highlight pulse when station is active in current step */
         .station-active {
             filter: drop-shadow(0 0 12px color-mix(in srgb, var(--brand) 65%, transparent));
-            transform: scale(1.05);
         }
 
         /* Energy stream connecting beam */
@@ -461,9 +458,12 @@
         }
 
         @keyframes ticketFloat {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0px) rotate(-1deg);
             }
+
             50% {
                 transform: translateY(-8px) rotate(1.5deg);
             }
@@ -489,18 +489,24 @@
 
         /* Keyframes */
         @keyframes floatSlow {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0px) rotate(0deg);
             }
+
             50% {
                 transform: translateY(-7px) rotate(0.4deg);
             }
         }
 
         @keyframes floatSubtle {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0px);
             }
+
             50% {
                 transform: translateY(-5px);
             }
@@ -511,13 +517,16 @@
                 transform: translateY(0) scaleX(0.8) scaleY(0.8);
                 opacity: 0;
             }
+
             30% {
                 opacity: 0.7;
             }
+
             70% {
                 opacity: 0.5;
                 transform: translateY(-16px) scaleX(1.3) scaleY(1.2) translateX(2px);
             }
+
             100% {
                 transform: translateY(-28px) scaleX(1.7) scaleY(1.4) translateX(-3px);
                 opacity: 0;
@@ -535,6 +544,7 @@
                 transform: scale(0.95);
                 opacity: 0.7;
             }
+
             100% {
                 transform: scale(1.08);
                 opacity: 1;
@@ -542,7 +552,9 @@
         }
 
         @keyframes pingRing {
-            75%, 100% {
+
+            75%,
+            100% {
                 transform: scale(2.2);
                 opacity: 0;
             }
@@ -553,6 +565,7 @@
                 opacity: 0.55;
                 transform: scale(0.96);
             }
+
             100% {
                 opacity: 0.95;
                 transform: scale(1.06);
@@ -560,9 +573,12 @@
         }
 
         @keyframes trayBob {
-            0%, 100% {
+
+            0%,
+            100% {
                 transform: translateY(0) rotate(0deg);
             }
+
             50% {
                 transform: translateY(-3px) rotate(1.5deg);
             }
@@ -577,16 +593,19 @@
             .node-orders {
                 display: none;
             }
+
             .node-kitchen {
                 top: 10px;
                 left: 10px;
                 transform: scale(0.9);
             }
+
             .node-dashboard-hub {
                 top: 10px;
                 right: 10px;
                 transform: scale(0.9);
             }
+
             .node-captain {
                 bottom: 10px;
                 right: 10px;
@@ -595,12 +614,14 @@
         }
 
         @media (max-width: 900px) {
+
             .node-kitchen,
             .node-captain,
             .node-dashboard-hub,
             .workflow-svg-layer {
                 display: none;
             }
+
             .ambient-glow-1,
             .ambient-glow-2 {
                 width: 320px;
@@ -611,6 +632,7 @@
 
         /* Accessibility: respect reduced motion preferences */
         @media(prefers-reduced-motion:reduce) {
+
             *,
             ::before,
             ::after {
@@ -643,6 +665,577 @@
             }
         }
     </style>
+
+
+    <style id="sb-css">
+        .sb {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 100vw;
+            transform: translateX(-50%);
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+            contain: layout paint style
+        }
+
+        .sb.sb-card {
+            left: 0;
+            width: 100%;
+            transform: none;
+            border-radius: inherit
+        }
+
+        .sb-wrap {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate
+        }
+
+        .sb:not(.on) *,
+        .sb:not(.on) *::before,
+        .sb:not(.on) *::after {
+            animation-play-state: paused !important
+        }
+
+        .sb-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .sb-dots {
+            position: absolute;
+            inset: 0;
+            opacity: .6;
+            background-image: radial-gradient(color-mix(in srgb, var(--fg) 12%, transparent) 1px, transparent 1.3px);
+            background-size: 26px 26px;
+            -webkit-mask-image: linear-gradient(#000, transparent 70%);
+            mask-image: linear-gradient(#000, transparent 70%)
+        }
+
+        .sb-orb {
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--c, var(--brand)) 16%, transparent), transparent 65%);
+            animation: sb-drift 18s ease-in-out infinite alternate
+        }
+
+        @keyframes sb-drift {
+            to {
+                transform: translate(70px, 40px) scale(1.14)
+            }
+        }
+
+        .sb-pt {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--brand);
+            opacity: .45
+        }
+
+        .sb-pt::before,
+        .sb-pt::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1.5px solid var(--brand);
+            animation: sb-ring 4s ease-out infinite
+        }
+
+        .sb-pt::after {
+            animation-delay: 2s
+        }
+
+        @keyframes sb-ring {
+            0% {
+                transform: scale(1);
+                opacity: .55
+            }
+
+            100% {
+                transform: scale(8);
+                opacity: 0
+            }
+        }
+
+        .sb-path {
+            fill: none;
+            stroke: color-mix(in srgb, var(--brand) 34%, transparent);
+            stroke-width: 2;
+            stroke-dasharray: 7 9;
+            vector-effect: non-scaling-stroke;
+            animation: sb-dash 6s linear infinite
+        }
+
+        .sb-slow {
+            animation-duration: 10s;
+            opacity: .5
+        }
+
+        @keyframes sb-dash {
+            to {
+                stroke-dashoffset: -64
+            }
+        }
+
+        .sb-dot {
+            fill: var(--brand);
+            filter: drop-shadow(0 0 6px var(--brand))
+        }
+
+        .sb-chip {
+            position: absolute;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            font: 600 11px Inter, sans-serif;
+            color: var(--brand);
+            white-space: nowrap;
+            opacity: 0;
+            animation: sb-chip 9s ease-in-out infinite
+        }
+
+        @keyframes sb-chip {
+            0% {
+                transform: translateY(40px);
+                opacity: 0
+            }
+
+            15%,
+            70% {
+                opacity: .95
+            }
+
+            100% {
+                transform: translateY(-70px);
+                opacity: 0
+            }
+        }
+
+        .sb-rail {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fg) 22%, transparent) 8%, color-mix(in srgb, var(--fg) 22%, transparent) 92%, transparent)
+        }
+
+        .sb-tk {
+            position: absolute;
+            top: 12px;
+            width: 34px;
+            height: 46px;
+            border-radius: 2px 2px 6px 6px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            transform-origin: 50% 0;
+            animation: sb-drop .9s cubic-bezier(.2, .8, .2, 1) var(--d) both, sb-swing var(--s) ease-in-out calc(var(--d) + .9s) infinite alternate
+        }
+
+        .sb-tk::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 8px;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--brand);
+            opacity: .6;
+            box-shadow: 0 7px 0 var(--line), 0 14px 0 var(--line), 0 21px 0 var(--line)
+        }
+
+        @keyframes sb-drop {
+            from {
+                transform: translateY(-70px);
+                opacity: 0
+            }
+
+            to {
+                transform: none;
+                opacity: 1
+            }
+        }
+
+        @keyframes sb-swing {
+            from {
+                transform: rotate(-4deg)
+            }
+
+            to {
+                transform: rotate(4deg)
+            }
+        }
+
+        .sb-line {
+            fill: none;
+            stroke: color-mix(in srgb, var(--brand) 55%, transparent);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 1 1;
+            animation: sb-draw 9s ease-in-out infinite
+        }
+
+        @keyframes sb-draw {
+            0% {
+                stroke-dashoffset: 1
+            }
+
+            55%,
+            92% {
+                stroke-dashoffset: 0
+            }
+
+            100% {
+                stroke-dashoffset: -1
+            }
+        }
+
+        .sb-area {
+            animation: sb-fade 9s ease-in-out infinite
+        }
+
+        @keyframes sb-fade {
+
+            0%,
+            10% {
+                opacity: 0
+            }
+
+            55%,
+            92% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        .sb-bars {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 34%;
+            display: flex;
+            align-items: flex-end;
+            gap: 1.2%;
+            padding: 0 2%;
+            opacity: .7;
+            -webkit-mask-image: linear-gradient(to top, #000 30%, transparent);
+            mask-image: linear-gradient(to top, #000 30%, transparent)
+        }
+
+        .sb-bars i {
+            flex: 1;
+            height: var(--h);
+            border-radius: 6px 6px 0 0;
+            background: linear-gradient(to top, color-mix(in srgb, var(--brand) 24%, transparent), transparent);
+            transform-origin: bottom;
+            animation: sb-grow 5s ease-in-out infinite alternate;
+            animation-delay: var(--d)
+        }
+
+        @keyframes sb-grow {
+            from {
+                transform: scaleY(.55)
+            }
+
+            to {
+                transform: scaleY(1)
+            }
+        }
+
+        .sb-belt {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 22px;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--fg) 18%, transparent) 0 10px, transparent 10px 18px)
+        }
+
+        .sb-pl {
+            position: absolute;
+            left: -50px;
+            bottom: 24px;
+            width: 30px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid var(--line);
+            animation: sb-belt 24s linear infinite
+        }
+
+        .sb-pl::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            bottom: 4px;
+            width: 14px;
+            height: 9px;
+            border-radius: 14px 14px 0 0;
+            background: var(--brand);
+            opacity: .6
+        }
+
+        .sb-pl::after {
+            content: "";
+            position: absolute;
+            left: 12px;
+            bottom: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--mut);
+            opacity: 0;
+            animation: sb-puff 3s ease-out infinite
+        }
+
+        @keyframes sb-belt {
+            to {
+                transform: translateX(calc(100vw + 100px))
+            }
+        }
+
+        @keyframes sb-puff {
+            0% {
+                transform: translateY(0) scale(.5);
+                opacity: 0
+            }
+
+            30% {
+                opacity: .35
+            }
+
+            100% {
+                transform: translateY(-20px) scale(2);
+                opacity: 0
+            }
+        }
+
+        .sb-ck {
+            position: absolute;
+            bottom: -30px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--ok) 15%, transparent);
+            opacity: 0;
+            animation: sb-rise 16s linear infinite
+        }
+
+        .sb-ck::after {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 5px;
+            height: 10px;
+            border: solid var(--ok);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg)
+        }
+
+        @keyframes sb-rise {
+            0% {
+                transform: translateY(0);
+                opacity: 0
+            }
+
+            10% {
+                opacity: .8
+            }
+
+            90% {
+                opacity: .5
+            }
+
+            100% {
+                transform: translateY(-110vh);
+                opacity: 0
+            }
+        }
+
+        .sb-qb {
+            position: absolute;
+            width: 38px;
+            height: 30px;
+            border-radius: 10px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            display: grid;
+            place-items: center;
+            animation: sb-bob 7s ease-in-out infinite alternate
+        }
+
+        .sb-qb::before {
+            content: "?";
+            font: 700 14px 'Plus Jakarta Sans', sans-serif;
+            color: color-mix(in srgb, var(--brand) 70%, transparent)
+        }
+
+        @keyframes sb-bob {
+            to {
+                transform: translateY(-14px) rotate(3deg)
+            }
+        }
+
+        .sb-ty {
+            position: absolute;
+            display: flex;
+            gap: 4px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            animation: sb-bob 6s ease-in-out infinite alternate
+        }
+
+        .sb-ty b {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--mut);
+            animation: sb-dotb 1.2s ease-in-out infinite
+        }
+
+        .sb-ty b:nth-child(2) {
+            animation-delay: .15s
+        }
+
+        .sb-ty b:nth-child(3) {
+            animation-delay: .3s
+        }
+
+        @keyframes sb-dotb {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: .4
+            }
+
+            30% {
+                transform: translateY(-4px);
+                opacity: 1
+            }
+        }
+
+        .sb-glow {
+            position: absolute;
+            left: 50%;
+            top: -45%;
+            width: 70%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--brand) 38%, transparent), transparent 65%);
+            animation: sb-glow 8s ease-in-out infinite alternate
+        }
+
+        @keyframes sb-glow {
+            from {
+                opacity: .5;
+                transform: translateX(-50%) scale(.95)
+            }
+
+            to {
+                opacity: .9;
+                transform: translateX(-50%) scale(1.08)
+            }
+        }
+
+        .sb-sheen {
+            position: absolute;
+            top: -20%;
+            bottom: -20%;
+            left: -30%;
+            width: 25%;
+            background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .09), transparent);
+            animation: sb-sheen 7s ease-in-out infinite
+        }
+
+        @keyframes sb-sheen {
+
+            0%,
+            50% {
+                transform: translateX(0) skewX(-18deg)
+            }
+
+            100% {
+                transform: translateX(560%) skewX(-18deg)
+            }
+        }
+
+        .sb-em {
+            position: absolute;
+            bottom: -8px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--brand);
+            opacity: 0;
+            animation: sb-emb 9s linear infinite
+        }
+
+        @keyframes sb-emb {
+            0% {
+                transform: translateY(0);
+                opacity: 0
+            }
+
+            15% {
+                opacity: .5
+            }
+
+            100% {
+                transform: translateY(-340px);
+                opacity: 0
+            }
+        }
+
+        @media(max-width:1100px) {
+            .sb-chip {
+                display: none
+            }
+        }
+
+        @media(max-width:900px) {
+
+            .sb-qb,
+            .sb-ty {
+                display: none
+            }
+        }
+
+        @media(max-width:640px) {
+            .sb-hm {
+                display: none
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .sb {
+                display: none
+            }
+        }
+    </style>
+
+
+
 </head>
 
 <body>
@@ -658,12 +1251,13 @@
         <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between" aria-label="Main">
             <a href="#top" class="flex items-center gap-2.5 fh font-extrabold text-lg">
                 <span class="w-8 h-8 rounded-lg grid place-items-center bg-brand text-white shadow-sm flex-shrink-0">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-                        <line x1="6" y1="1" x2="6" y2="4"/>
-                        <line x1="10" y1="1" x2="10" y2="4"/>
-                        <line x1="14" y1="1" x2="14" y2="4"/>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                        <line x1="6" y1="1" x2="6" y2="4" />
+                        <line x1="10" y1="1" x2="10" y2="4" />
+                        <line x1="14" y1="1" x2="14" y2="4" />
                     </svg>
                 </span>ChotuGTT</a>
             <ul id="links" class="hidden md:flex items-center gap-7 text-sm font-medium text-mut"></ul>
@@ -697,17 +1291,18 @@
             <div class="restaurant-stage" aria-hidden="true">
                 <div class="stage-inner">
                     <!-- SVG Network Connecting Lines with Animated Pulses -->
-                    <svg class="workflow-svg-layer" viewBox="0 0 1280 760" preserveAspectRatio="xMidYMid slice" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="workflow-svg-layer" viewBox="0 0 1280 760" preserveAspectRatio="xMidYMid slice"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
                         <defs>
                             <linearGradient id="flowGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
-                                <stop offset="0%" stop-color="#e4572e" stop-opacity="0.4"/>
-                                <stop offset="50%" stop-color="#e4572e" stop-opacity="0.8"/>
-                                <stop offset="100%" stop-color="#1f9d63" stop-opacity="0.5"/>
+                                <stop offset="0%" stop-color="#e4572e" stop-opacity="0.4" />
+                                <stop offset="50%" stop-color="#e4572e" stop-opacity="0.8" />
+                                <stop offset="100%" stop-color="#1f9d63" stop-opacity="0.5" />
                             </linearGradient>
                             <linearGradient id="flowGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#2f6fd6" stop-opacity="0.4"/>
-                                <stop offset="60%" stop-color="#e4572e" stop-opacity="0.75"/>
-                                <stop offset="100%" stop-color="#e4572e" stop-opacity="0.4"/>
+                                <stop offset="0%" stop-color="#2f6fd6" stop-opacity="0.4" />
+                                <stop offset="60%" stop-color="#e4572e" stop-opacity="0.75" />
+                                <stop offset="100%" stop-color="#e4572e" stop-opacity="0.4" />
                             </linearGradient>
                         </defs>
 
@@ -718,20 +1313,25 @@
                         <!-- Path 3: Dashboard to Captain Service -->
                         <path class="flow-line" d="M 1110 85 C 1180 250, 1180 470, 1110 650" stroke="url(#flowGrad1)" />
                         <!-- Path 4: Captain back to Kitchen -->
-                        <path class="flow-line" d="M 1060 650 C 840 690, 460 210, 230 85" stroke="url(#flowGrad2)" stroke-dasharray="4 8" />
+                        <path class="flow-line" d="M 1060 650 C 840 690, 460 210, 230 85" stroke="url(#flowGrad2)"
+                            stroke-dasharray="4 8" />
 
                         <!-- Traveling Light Packets (Animated along paths) -->
                         <circle r="4" class="flow-packet">
-                            <animateMotion dur="5.5s" repeatCount="indefinite" path="M 170 90 C 110 250, 110 470, 170 650" />
+                            <animateMotion dur="5.5s" repeatCount="indefinite"
+                                path="M 170 90 C 110 250, 110 470, 170 650" />
                         </circle>
                         <circle r="3.5" class="flow-packet" fill="#2f6fd6">
-                            <animateMotion dur="7.5s" repeatCount="indefinite" path="M 230 650 C 460 700, 840 220, 1070 85" />
+                            <animateMotion dur="7.5s" repeatCount="indefinite"
+                                path="M 230 650 C 460 700, 840 220, 1070 85" />
                         </circle>
                         <circle r="4" class="flow-packet" fill="#1f9d63">
-                            <animateMotion dur="6.5s" repeatCount="indefinite" path="M 1110 85 C 1180 250, 1180 470, 1110 650" />
+                            <animateMotion dur="6.5s" repeatCount="indefinite"
+                                path="M 1110 85 C 1180 250, 1180 470, 1110 650" />
                         </circle>
                         <circle r="3.5" class="flow-packet" fill="#e4572e">
-                            <animateMotion dur="8.5s" repeatCount="indefinite" path="M 1060 650 C 840 690, 460 210, 230 85" />
+                            <animateMotion dur="8.5s" repeatCount="indefinite"
+                                path="M 1060 650 C 840 690, 460 210, 230 85" />
                         </circle>
                     </svg>
 
@@ -739,28 +1339,39 @@
                     <div class="op-node node-kitchen">
                         <div class="stage-card flex items-center gap-3">
                             <!-- Stylized Chef & Cooking Station SVG -->
-                            <div class="relative w-14 h-14 flex items-center justify-center rounded-xl bg-orange-500/10 border border-orange-500/20">
+                            <div
+                                class="relative w-14 h-14 flex items-center justify-center rounded-xl bg-orange-500/10 border border-orange-500/20">
                                 <!-- Rising Steam Wisps -->
-                                <svg class="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10 overflow-visible" viewBox="0 0 40 40">
-                                    <path class="steam-wisp" d="M 14 36 C 11 28, 17 22, 14 14" stroke="#e4572e" stroke-width="2" stroke-linecap="round" fill="none"/>
-                                    <path class="steam-wisp steam-wisp-2" d="M 20 38 C 24 29, 16 23, 20 12" stroke="#e4572e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
-                                    <path class="steam-wisp steam-wisp-3" d="M 27 36 C 24 27, 30 20, 26 13" stroke="#e4572e" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+                                <svg class="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10 overflow-visible"
+                                    viewBox="0 0 40 40">
+                                    <path class="steam-wisp" d="M 14 36 C 11 28, 17 22, 14 14" stroke="#e4572e"
+                                        stroke-width="2" stroke-linecap="round" fill="none" />
+                                    <path class="steam-wisp steam-wisp-2" d="M 20 38 C 24 29, 16 23, 20 12"
+                                        stroke="#e4572e" stroke-width="2.2" stroke-linecap="round" fill="none" />
+                                    <path class="steam-wisp steam-wisp-3" d="M 27 36 C 24 27, 30 20, 26 13"
+                                        stroke="#e4572e" stroke-width="1.8" stroke-linecap="round" fill="none" />
                                 </svg>
 
                                 <!-- Chef & Stove / Skillet Illustration -->
-                                <svg width="34" height="34" viewBox="0 0 34 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <svg width="34" height="34" viewBox="0 0 34 34" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <!-- Chef Toque Hat -->
-                                    <path d="M12 12C10.5 12 9.5 10.5 10 9C9.5 7.5 10.5 5.5 12.5 5.5C13.5 4.5 16 4.5 17 5.5C18 4.5 20.5 4.5 21.5 5.5C23.5 5.5 24.5 7.5 24 9C24.5 10.5 23.5 12 22 12H12Z" fill="#e4572e" fill-opacity="0.2" stroke="#e4572e" stroke-width="1.5" stroke-linejoin="round"/>
-                                    <path d="M11.5 12H22.5V14.5H11.5V12Z" fill="#e4572e"/>
+                                    <path
+                                        d="M12 12C10.5 12 9.5 10.5 10 9C9.5 7.5 10.5 5.5 12.5 5.5C13.5 4.5 16 4.5 17 5.5C18 4.5 20.5 4.5 21.5 5.5C23.5 5.5 24.5 7.5 24 9C24.5 10.5 23.5 12 22 12H12Z"
+                                        fill="#e4572e" fill-opacity="0.2" stroke="#e4572e" stroke-width="1.5"
+                                        stroke-linejoin="round" />
+                                    <path d="M11.5 12H22.5V14.5H11.5V12Z" fill="#e4572e" />
                                     <!-- Chef Face / Profile silhouette -->
-                                    <circle cx="17" cy="18" r="3.2" stroke="var(--fg)" stroke-width="1.3"/>
+                                    <circle cx="17" cy="18" r="3.2" stroke="var(--fg)" stroke-width="1.3" />
                                     <!-- Cooking Pan with Flame -->
-                                    <path d="M6 25H22C22 28.5 18.5 30 14 30C9.5 30 6 28.5 6 25Z" fill="var(--fg)" fill-opacity="0.8"/>
-                                    <line x1="22" y1="26" x2="28" y2="28" stroke="var(--fg)" stroke-width="2.2" stroke-linecap="round"/>
+                                    <path d="M6 25H22C22 28.5 18.5 30 14 30C9.5 30 6 28.5 6 25Z" fill="var(--fg)"
+                                        fill-opacity="0.8" />
+                                    <line x1="22" y1="26" x2="28" y2="28" stroke="var(--fg)" stroke-width="2.2"
+                                        stroke-linecap="round" />
                                     <!-- Pan Sizzle Food / Flame -->
-                                    <circle cx="11" cy="24" r="1.5" fill="#e4572e" class="cooking-glow"/>
-                                    <circle cx="16" cy="23.5" r="1.8" fill="#d98a0b" class="cooking-glow"/>
-                                    <circle cx="14" cy="22" r="1.2" fill="#e4572e"/>
+                                    <circle cx="11" cy="24" r="1.5" fill="#e4572e" class="cooking-glow" />
+                                    <circle cx="16" cy="23.5" r="1.8" fill="#d98a0b" class="cooking-glow" />
+                                    <circle cx="14" cy="22" r="1.2" fill="#e4572e" />
                                 </svg>
                             </div>
                             <div class="pr-2">
@@ -769,47 +1380,64 @@
                                     <span class="text-xs font-bold tracking-tight">Kitchen Display</span>
                                 </div>
                                 <p class="text-[11px] text-mut mt-0.5">Table 4 · Paneer Tikka</p>
-                                <span class="inline-block mt-1 text-[10px] font-semibold text-amber-700 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded">Preparing · 4m</span>
+                                <span
+                                    class="inline-block mt-1 text-[10px] font-semibold text-amber-700 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded">Preparing
+                                    · 4m</span>
                             </div>
                         </div>
                     </div>
 
                     <!-- OPERATIONAL NODE 2: Live Order Workflow (New -> Preparing -> Ready) -->
                     <div class="op-node node-orders">
-                        <div class="text-[10px] font-bold text-mut tracking-wider uppercase pl-1 mb-1.5 flex items-center gap-1">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                        <div
+                            class="text-[10px] font-bold text-mut tracking-wider uppercase pl-1 mb-1.5 flex items-center gap-1">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
                             Live Order Pipeline
                         </div>
                         <div class="flex flex-col gap-2">
                             <!-- Order 1: New -->
-                            <div class="stage-card flex items-center justify-between gap-3 min-w-[215px] transition-all">
+                            <div
+                                class="stage-card flex items-center justify-between gap-3 min-w-[215px] transition-all">
                                 <div class="flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
                                     <span class="text-xs font-bold">#1045</span>
                                     <span class="text-[11px] text-mut">Table 2</span>
                                 </div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">New Order</span>
+                                <span
+                                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">New
+                                    Order</span>
                             </div>
                             <!-- Order 2: Preparing -->
-                            <div class="stage-card flex items-center justify-between gap-3 min-w-[215px] border-l-2 border-l-amber-500">
+                            <div
+                                class="stage-card flex items-center justify-between gap-3 min-w-[215px] border-l-2 border-l-amber-500">
                                 <div class="flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
                                     <span class="text-xs font-bold">#1044</span>
                                     <span class="text-[11px] text-mut">Table 4</span>
                                 </div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                                <span
+                                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center gap-1">
                                     <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Cooking
                                 </span>
                             </div>
                             <!-- Order 3: Ready to Serve -->
-                            <div class="stage-card flex items-center justify-between gap-3 min-w-[215px] border-l-2 border-l-emerald-500">
+                            <div
+                                class="stage-card flex items-center justify-between gap-3 min-w-[215px] border-l-2 border-l-emerald-500">
                                 <div class="flex items-center gap-2">
                                     <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
                                     <span class="text-xs font-bold">#1043</span>
                                     <span class="text-[11px] text-mut">Table 7</span>
                                 </div>
-                                <span class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
-                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>
+                                <span
+                                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
                                     Ready to Serve
                                 </span>
                             </div>
@@ -820,29 +1448,37 @@
                     <div class="op-node node-captain">
                         <div class="stage-card flex items-center gap-3">
                             <!-- Captain with Serving Tray Graphic -->
-                            <div class="relative w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
-                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <div
+                                class="relative w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
                                     <!-- Captain Figure Silhouette -->
-                                    <circle cx="16" cy="9" r="3.5" fill="var(--fg)" fill-opacity="0.8"/>
-                                    <path d="M11 25V18C11 15.5 13 14 16 14C19 14 21 15.5 21 18V25" stroke="var(--fg)" stroke-width="1.8" stroke-linecap="round"/>
+                                    <circle cx="16" cy="9" r="3.5" fill="var(--fg)" fill-opacity="0.8" />
+                                    <path d="M11 25V18C11 15.5 13 14 16 14C19 14 21 15.5 21 18V25" stroke="var(--fg)"
+                                        stroke-width="1.8" stroke-linecap="round" />
                                     <!-- Bowtie -->
-                                    <path d="M14.5 14.5L17.5 15.5M17.5 14.5L14.5 15.5" stroke="#e4572e" stroke-width="1.5"/>
+                                    <path d="M14.5 14.5L17.5 15.5M17.5 14.5L14.5 15.5" stroke="#e4572e"
+                                        stroke-width="1.5" />
                                     <!-- Serving Tray & Cloche (Animated gentle bob) -->
                                     <g class="animated-tray">
-                                        <line x1="17" y1="17" x2="26" y2="17" stroke="var(--fg)" stroke-width="2" stroke-linecap="round"/>
+                                        <line x1="17" y1="17" x2="26" y2="17" stroke="var(--fg)" stroke-width="2"
+                                            stroke-linecap="round" />
                                         <!-- Cloche dome -->
-                                        <path d="M19 17C19 13.8 24 13.8 24 17Z" fill="#e4572e" fill-opacity="0.85"/>
-                                        <circle cx="21.5" cy="13.2" r="1.1" fill="#e4572e"/>
+                                        <path d="M19 17C19 13.8 24 13.8 24 17Z" fill="#e4572e" fill-opacity="0.85" />
+                                        <circle cx="21.5" cy="13.2" r="1.1" fill="#e4572e" />
                                     </g>
                                 </svg>
                             </div>
                             <div class="pr-2">
                                 <div class="flex items-center gap-1.5">
-                                    <span class="w-2 h-2 rounded-full bg-emerald-500 pulse-ring text-emerald-500"></span>
+                                    <span
+                                        class="w-2 h-2 rounded-full bg-emerald-500 pulse-ring text-emerald-500"></span>
                                     <span class="text-xs font-bold tracking-tight">Captain Service</span>
                                 </div>
                                 <p class="text-[11px] text-mut mt-0.5">Assigned: Table 4</p>
-                                <span class="inline-block mt-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-300 px-1.5 py-0.5 rounded">Serving order now</span>
+                                <span
+                                    class="inline-block mt-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-300 px-1.5 py-0.5 rounded">Serving
+                                    order now</span>
                             </div>
                         </div>
                     </div>
@@ -850,22 +1486,27 @@
                     <!-- OPERATIONAL NODE 4: Live Restaurant Management Hub & Telemetry -->
                     <div class="op-node node-dashboard-hub">
                         <div class="stage-card flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                                    <line x1="8" y1="21" x2="16" y2="21"/>
-                                    <line x1="12" y1="17" x2="12" y2="21"/>
+                            <div
+                                class="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
                                 </svg>
                             </div>
                             <div>
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold">Restaurant Live Sync</span>
-                                    <span class="pill bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-[9px] py-0">POS ACTIVE</span>
+                                    <span
+                                        class="pill bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-[9px] py-0">POS
+                                        ACTIVE</span>
                                 </div>
                                 <div class="flex items-center gap-3 mt-1 text-[11px] text-mut">
                                     <span>Tables: <strong class="text-fg">8 / 10</strong></span>
                                     <span>•</span>
-                                    <span>Turnaround: <strong class="text-emerald-600 dark:text-emerald-400">14m</strong></span>
+                                    <span>Turnaround: <strong
+                                            class="text-emerald-600 dark:text-emerald-400">14m</strong></span>
                                 </div>
                             </div>
                         </div>
@@ -874,16 +1515,20 @@
             </div>
 
             <!-- HERO CONTENT (Main Foreground Layer) -->
-            <section class="max-w-6xl mx-auto px-4 pt-14 pb-24 md:pt-20 md:pb-28 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+            <section
+                class="max-w-6xl mx-auto px-4 pt-14 pb-24 md:pt-20 md:pb-28 grid lg:grid-cols-2 gap-12 items-center relative z-10">
                 <div>
-                    <p class="inline-flex items-center gap-2 pill bg-soft text-mut mb-4 border border-line" style="background:var(--soft)">
+                    <p class="inline-flex items-center gap-2 pill bg-soft text-mut mb-4 border border-line"
+                        style="background:var(--soft)">
                         <span class="w-2 h-2 rounded-full bg-brand"></span>
                         Restaurant Management Platform
                     </p>
-                    <h1 class="text-4xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight">Run Your Restaurant. Not
+                    <h1 class="text-4xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight">Run Your Restaurant.
+                        Not
                         the Chaos.</h1>
                     <p class="mt-5 text-lg text-mut max-w-xl">Manage orders, tables, billing, menu items and daily
-                        restaurant operations with ChotuGTT—built to help your team work smarter and serve customers faster.
+                        restaurant operations with ChotuGTT—built to help your team work smarter and serve customers
+                        faster.
                     </p>
                     <div class="mt-8 flex flex-col sm:flex-row gap-3">
                         <a data-cfg="register" class="btn btn-p cursor-pointer">Get Started</a>
@@ -891,11 +1536,17 @@
                     </div>
                     <div class="mt-6 flex items-center gap-4 text-xs text-mut font-medium">
                         <span class="flex items-center gap-1.5">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-brand"><polyline points="20 6 9 17 4 12"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" class="text-brand">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
                             Kitchen & Captain Connected
                         </span>
                         <span class="flex items-center gap-1.5">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="text-brand"><polyline points="20 6 9 17 4 12"/></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" class="text-brand">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
                             Instant POS & Billing
                         </span>
                     </div>
@@ -952,7 +1603,8 @@
                     <h3 class="text-xl font-bold">Restaurant Owner Panel</h3>
                     <p class="mt-2 text-mut flex-1">Manage restaurant operations, orders, menu, billing and staff from
                         the web dashboard.</p>
-                    <div class="mt-6 flex flex-col sm:flex-row gap-3"><a data-cfg="login" class="btn btn-p cursor-pointer">Open Owner
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3"><a data-cfg="login"
+                            class="btn btn-p cursor-pointer">Open Owner
                             Login</a><a data-cfg="register" class="btn btn-s cursor-pointer">Get Started</a></div>
                 </article>
                 <article class="card p-6 flex flex-col">
@@ -1009,7 +1661,8 @@
                     one organized platform.</p>
                 <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
                     <a data-cfg="register" class="btn btn-p cursor-pointer">Get Started</a>
-                    <a data-cfg="login" class="btn cursor-pointer" style="background:transparent;border:1px solid currentColor">Access
+                    <a data-cfg="login" class="btn cursor-pointer"
+                        style="background:transparent;border:1px solid currentColor">Access
                         Owner Panel</a>
                 </div>
             </div>
@@ -1019,15 +1672,17 @@
     <footer class="border-t border-line relative z-10">
         <div class="max-w-6xl mx-auto px-4 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
             <div class="lg:col-span-2"><a href="#top" class="flex items-center gap-2.5 fh font-extrabold text-lg">
-                <span class="w-8 h-8 rounded-lg grid place-items-center bg-brand text-white shadow-sm flex-shrink-0">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
-                        <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
-                        <line x1="6" y1="1" x2="6" y2="4"/>
-                        <line x1="10" y1="1" x2="10" y2="4"/>
-                        <line x1="14" y1="1" x2="14" y2="4"/>
-                    </svg>
-                </span>ChotuGTT</a>
+                    <span
+                        class="w-8 h-8 rounded-lg grid place-items-center bg-brand text-white shadow-sm flex-shrink-0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                            <line x1="6" y1="1" x2="6" y2="4" />
+                            <line x1="10" y1="1" x2="10" y2="4" />
+                            <line x1="14" y1="1" x2="14" y2="4" />
+                        </svg>
+                    </span>ChotuGTT</a>
                 <p class="mt-3 text-mut max-w-sm">Restaurant management software for orders, tables, billing and menus.
                 </p>
             </div>
@@ -1671,6 +2326,80 @@
         /* reveal */
         const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: .12 });
         document.querySelectorAll('.rv').forEach(el => io.observe(el));
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const q = s => document.querySelector(s);
+            const n = (c, f) => Array.from({ length: c }, (_, i) => f(i)).join('');
+            const mk = (host, html, cls = '') => { if (!host) return; const d = document.createElement('div'); d.className = 'sb ' + cls; d.setAttribute('aria-hidden', 'true'); d.innerHTML = html; host.prepend(d); };
+            const dots = '<i class="sb-dots"></i>';
+            const svg = p => `<svg class="sb-svg" viewBox="0 0 1200 500" preserveAspectRatio="none">${p}</svg>`;
+            const pt = (l, t) => `<i class="sb-pt" style="left:${l}%;top:${t}%"></i>`;
+
+            mk(q('#features'), dots + '<i class="sb-rail"></i>' + n(8, i => `<i class="sb-tk${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 19, 31, 44, 57, 69, 81, 92][i]}%;animation-duration:${5 + i % 3}s;animation-delay:-${i * .9}s"></i>`));
+            mk(q('#how'), dots + svg('<path class="sb-path" d="M0 330C200 250 300 410 500 330S800 250 1000 330S1150 380 1200 340"/><path class="sb-path sb-slow" d="M0 380C250 330 350 440 600 380S900 320 1200 390"/>') + pt(17, 64) + pt(50, 66) + pt(83, 64));
+            const H = [40, 62, 48, 75, 58, 88, 66, 52, 80, 94, 70, 56, 84, 60, 72, 90, 64, 50, 78, 68];
+            mk(q('#product'), '<div class="sb-bars">' + n(20, i => `<i style="--h:${H[i]}%;--d:-${(i * .7).toFixed(1)}s"></i>`) + '</div>');
+            mk(q('#captain'), dots + svg('<path class="sb-path" d="M120 150C300 80 450 260 650 200S900 80 1080 130"/><path class="sb-path sb-slow" d="M200 420C400 330 600 460 800 380S1000 330 1100 400"/>') + pt(10, 30) + pt(54, 40) + pt(90, 26) + pt(17, 84) + pt(67, 76));
+            mk(q('#flow') && q('#flow').closest('section'), '<i class="sb-belt"></i>' + n(4, i => `<i class="sb-pl${i % 2 ? ' sb-hm' : ''}" style="animation-delay:-${i * 6}s"></i>`));
+            mk(q('#ben') && q('#ben').closest('section'), n(8, i => `<i class="sb-ck${i % 2 ? ' sb-hm' : ''}" style="left:${[6, 17, 28, 41, 55, 67, 79, 91][i]}%;animation-duration:${13 + i % 4 * 2}s;animation-delay:-${i * 2.3}s"></i>`));
+            mk(q('#faq'), n(6, i => `<i class="sb-qb" style="left:${[4, 11, 18, 86, 92, 80][i]}%;top:${[14, 62, 34, 20, 66, 48][i]}%;animation-delay:-${i * 1.4}s"></i>`));
+            const cta = q('main > section:last-of-type > .rounded-3xl');
+            if (cta) { cta.classList.add('sb-wrap'); mk(cta, '<i class="sb-glow"></i>' + n(8, i => `<i class="sb-em${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 20, 32, 45, 58, 70, 82, 93][i]}%;animation-delay:-${i * 1.1}s;animation-duration:${8 + i % 3}s"></i>`), 'sb-card'); }
+
+            const layers = [...document.querySelectorAll('.sb')];
+            if (!('IntersectionObserver' in window)) { layers.forEach(l => l.classList.add('on')); return; }
+            const vis = new WeakMap();
+            const upd = l => l.classList.toggle('on', !!vis.get(l) && !document.hidden);
+            const io = new IntersectionObserver(es => es.forEach(e => { vis.set(e.target, e.isIntersecting); upd(e.target); }), { rootMargin: '80px' });
+            layers.forEach(l => io.observe(l));
+            document.addEventListener('visibilitychange', () => layers.forEach(upd));
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const q = s => document.querySelector(s);
+            const n = (c, f) => Array.from({ length: c }, (_, i) => f(i)).join('');
+            const mk = (host, html, cls = '') => { if (!host) return; const d = document.createElement('div'); d.className = 'sb ' + cls; d.setAttribute('aria-hidden', 'true'); d.innerHTML = html; host.prepend(d); };
+            const dots = '<i class="sb-dots"></i>';
+            const orb = (x, y, c = '') => `<i class="sb-orb" style="left:${x};top:${y};${c ? '--c:' + c : ''}"></i>`;
+            const svg = p => `<svg class="sb-svg" viewBox="0 0 1200 500" preserveAspectRatio="none">${p}</svg>`;
+            const pt = (l, t) => `<i class="sb-pt" style="left:${l}%;top:${t}%"></i>`;
+            const dot = (p, d) => `<circle class="sb-dot sb-hm" r="5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${p}"/></circle>`;
+            const chip = (t, l, top, d) => `<i class="sb-chip" style="left:${l}%;top:${top}%;animation-delay:-${d}s">${t}</i>`;
+
+            const HOW = 'M0 330C200 250 300 410 500 330S800 250 1000 330S1150 380 1200 340';
+            const CAP = 'M120 150C300 80 450 260 650 200S900 80 1080 130';
+            const LINE = 'M0 400C120 380 200 420 300 350S480 320 560 270S740 290 820 210S1020 140 1200 100';
+
+            mk(q('#features'), dots + orb('-120px', '-160px') + '<i class="sb-rail"></i>' + n(8, i => `<i class="sb-tk${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 19, 31, 44, 57, 69, 81, 92][i]}%;--d:${(i * .12).toFixed(2)}s;--s:${5 + i % 3}s"></i>`));
+            mk(q('#how'), dots + svg(`<path class="sb-path" d="${HOW}"/><path class="sb-path sb-slow" d="M0 380C250 330 350 440 600 380S900 320 1200 390"/>${dot(HOW, 8)}`) + pt(17, 64) + pt(50, 66) + pt(83, 64));
+            const H = [40, 62, 48, 75, 58, 88, 66, 52, 80, 94, 70, 56, 84, 60, 72, 90, 64, 50, 78, 68];
+            mk(q('#product'), orb('55%', '-120px') + svg(`<defs><linearGradient id="sbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--brand)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--brand)" stop-opacity="0"/></linearGradient></defs><path class="sb-area" d="${LINE}L1200 500L0 500Z" fill="url(#sbg)"/><path class="sb-line" pathLength="1" d="${LINE}"/><circle class="sb-dot sb-hm" r="6"><animateMotion dur="9s" repeatCount="indefinite" path="${LINE}" keyPoints="0;1;1" keyTimes="0;.55;1" calcMode="linear"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.92;1" dur="9s" repeatCount="indefinite"/></circle>`) + '<div class="sb-bars">' + n(20, i => `<i style="--h:${H[i]}%;--d:-${(i * .7).toFixed(1)}s"></i>`) + '</div>' + chip('+ ₹450 paid', 3, 60, 0) + chip('Order #1051', 8, 70, 3) + chip('Table 6 free', 2, 75, 6));
+            mk(q('#captain'), dots + svg(`<path class="sb-path" d="${CAP}"/><path class="sb-path sb-slow" d="M200 420C400 330 600 460 800 380S1000 330 1100 400"/>${dot(CAP, 7)}`) + pt(10, 30) + pt(54, 40) + pt(90, 26) + pt(17, 84) + pt(67, 76) + chip('New order · Table 4', 78, 70, 1) + chip('Ready to serve', 84, 78, 5));
+            mk(q('#flow') && q('#flow').closest('section'), '<i class="sb-belt"></i>' + n(4, i => `<i class="sb-pl${i % 2 ? ' sb-hm' : ''}" style="animation-delay:-${i * 6}s,-${i}s"></i>`));
+            mk(q('#ben') && q('#ben').closest('section'), orb('60%', '45%', 'var(--ok)') + n(8, i => `<i class="sb-ck${i % 2 ? ' sb-hm' : ''}" style="left:${[6, 17, 28, 41, 55, 67, 79, 91][i]}%;animation-duration:${13 + i % 4 * 2}s;animation-delay:-${i * 2.3}s"></i>`));
+            mk(q('#faq'), n(6, i => `<i class="sb-qb" style="left:${[4, 11, 18, 86, 92, 80][i]}%;top:${[14, 62, 34, 20, 66, 48][i]}%;animation-delay:-${i * 1.4}s"></i>`) + '<i class="sb-ty" style="left:6%;top:82%"><b></b><b></b><b></b></i><i class="sb-ty" style="left:88%;top:8%"><b></b><b></b><b></b></i>');
+            const cta = q('main > section:last-of-type > .rounded-3xl');
+            if (cta) { cta.classList.add('sb-wrap'); mk(cta, '<i class="sb-glow"></i><i class="sb-sheen"></i>' + n(8, i => `<i class="sb-em${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 20, 32, 45, 58, 70, 82, 93][i]}%;animation-delay:-${i * 1.1}s;animation-duration:${8 + i % 3}s"></i>`), 'sb-card'); }
+
+            [['#fgrid', 70], ['#steps', 120], ['#flow', 80], ['#ben', 70]].forEach(([s, d]) => {
+                const h = q(s); if (!h) return;
+                [...h.children].forEach((el, i) => { el.style.transitionDelay = i * d + 'ms'; el.addEventListener('transitionend', () => { el.style.transitionDelay = ''; }, { once: true }); });
+            });
+
+            const layers = [...document.querySelectorAll('.sb')];
+            if (!('IntersectionObserver' in window)) { layers.forEach(l => l.classList.add('on')); return; }
+            const vis = new WeakMap();
+            const upd = l => {
+                const on = !!vis.get(l) && !document.hidden;
+                l.classList.toggle('on', on);
+                l.querySelectorAll('svg').forEach(s => { try { on ? s.unpauseAnimations() : s.pauseAnimations(); } catch (e) { } });
+            };
+            const io = new IntersectionObserver(es => es.forEach(e => { vis.set(e.target, e.isIntersecting); upd(e.target); }), { rootMargin: '80px' });
+            layers.forEach(l => io.observe(l));
+            document.addEventListener('visibilitychange', () => layers.forEach(upd));
+        });
     </script>
 </body>
 
