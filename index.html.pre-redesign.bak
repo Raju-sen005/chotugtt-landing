@@ -1,0 +1,2391 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <title>Transserve – Restaurant Management Platform</title>
+    <meta name="description"
+        content="Manage orders, tables, billing, menu items and daily restaurant operations from one platform with Transserve.">
+    <meta property="og:title" content="Transserve – Restaurant Management Platform">
+    <meta property="og:description" content="Orders, tables, billing and menu management in one place.">
+    <meta property="og:type" content="website">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { head: ['"Plus Jakarta Sans"', 'sans-serif'], body: ['Inter', 'sans-serif'] },
+                    colors: { brand: 'var(--brand)', bg: 'var(--bg)', card: 'var(--card)', fg: 'var(--fg)', mut: 'var(--mut)', line: 'var(--line)', soft: 'var(--soft)' }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Replace these tokens with Transserve's existing design tokens */
+        :root {
+            --brand: #e4572e;
+            --brandfg: #fff;
+            --bg: #fafaf7;
+            --card: #fff;
+            --fg: #17181c;
+            --mut: #5d6270;
+            --line: #e6e6e0;
+            --soft: #f1f1ec;
+            --ok: #1f9d63;
+            --warn: #d98a0b;
+            --info: #2f6fd6;
+            box-sizing: border-box;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 0px)
+        }
+
+        @media(prefers-color-scheme:dark) {
+            :root:not([data-theme=light]) {
+                --brand: #f0693f;
+                --bg: #111215;
+                --card: #1a1c21;
+                --fg: #f2f2ee;
+                --mut: #a3a8b5;
+                --line: #2b2e36;
+                --soft: #22252b
+            }
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 5rem;
+            height: auto
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--fg);
+            font-family: Inter, sans-serif;
+            overflow-x: hidden
+        }
+
+        h1,
+        h2,
+        h3,
+        .fh {
+            font-family: 'Plus Jakarta Sans', sans-serif
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: .5rem;
+            min-height: 44px;
+            padding: .65rem 1.25rem;
+            border-radius: .75rem;
+            font-weight: 600;
+            font-size: .95rem;
+            transition: transform .15s, background .15s, box-shadow .15s
+        }
+
+        .btn:active {
+            transform: scale(.97)
+        }
+
+        .btn-p {
+            background: var(--brand);
+            color: var(--brandfg)
+        }
+
+        .btn-p:hover {
+            box-shadow: 0 6px 18px -6px var(--brand)
+        }
+
+        .btn-s {
+            background: var(--card);
+            border: 1px solid var(--line)
+        }
+
+        .btn-s:hover {
+            background: var(--soft)
+        }
+
+        .btn[aria-disabled=true] {
+            opacity: .55;
+            cursor: not-allowed;
+            pointer-events: none
+        }
+
+        :focus-visible {
+            outline: 2px solid var(--brand);
+            outline-offset: 2px
+        }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 1rem
+        }
+
+        .rv {
+            opacity: 0;
+            transform: translateY(14px);
+            transition: opacity .5s, transform .5s
+        }
+
+        .rv.in {
+            opacity: 1;
+            transform: none
+        }
+
+        .faq-a {
+            display: grid;
+            grid-template-rows: 0fr;
+            transition: grid-template-rows .25s
+        }
+
+        .faq-a>div {
+            overflow: hidden
+        }
+
+        .faq-open .faq-a {
+            grid-template-rows: 1fr
+        }
+
+        .faq-open .chev {
+            transform: rotate(180deg)
+        }
+
+        .chev {
+            transition: transform .25s
+        }
+
+        .pill {
+            font-size: .7rem;
+            font-weight: 600;
+            padding: .15rem .5rem;
+            border-radius: 999px
+        }
+
+        /* ============================================================
+           PREMIUM ANIMATED RESTAURANT WORKFLOW BACKGROUND STYLES
+           ============================================================ */
+
+        .hero-stage-wrapper {
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(180deg, var(--bg) 0%, color-mix(in srgb, var(--soft) 40%, var(--bg)) 100%);
+        }
+
+        /* Ambient subtle restaurant blueprint grid */
+        .ambient-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--fg) 4%, transparent) 1px, transparent 0);
+            background-size: 28px 28px;
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        /* Ambient warm glows */
+        .ambient-glow-1 {
+            position: absolute;
+            top: -12%;
+            right: 8%;
+            width: 550px;
+            height: 550px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--brand) 11%, transparent) 0%, transparent 68%);
+            filter: blur(55px);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 10s ease-in-out infinite alternate;
+        }
+
+        .ambient-glow-2 {
+            position: absolute;
+            bottom: 2%;
+            left: -4%;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, #f59e0b 9%, transparent) 0%, transparent 70%);
+            filter: blur(60px);
+            pointer-events: none;
+            z-index: 0;
+            animation: pulseGlow 12s ease-in-out infinite alternate-reverse;
+        }
+
+        /* Restaurant Animated Stage Container */
+        .restaurant-stage {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .stage-inner {
+            position: relative;
+            max-width: 80rem;
+            margin: 0 auto;
+            height: 100%;
+            min-height: 720px;
+        }
+
+        /* SVG Connection Lines */
+        .workflow-svg-layer {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .flow-line {
+            stroke: color-mix(in srgb, var(--brand) 28%, transparent);
+            stroke-width: 1.6;
+            stroke-dasharray: 6 6;
+            animation: dashFlow 20s linear infinite;
+            fill: none;
+        }
+
+        .flow-packet {
+            fill: var(--brand);
+            filter: drop-shadow(0 0 5px var(--brand));
+        }
+
+        /* Operational Nodes Base */
+        .op-node {
+            position: absolute;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* Kitchen / Chef Station Node: Top-Left */
+        .node-kitchen {
+            top: 24px;
+            left: 24px;
+            animation: floatSubtle 7s ease-in-out infinite;
+        }
+
+        /* Order Pipeline Floating Cards: Bottom-Left */
+        .node-orders {
+            bottom: 30px;
+            left: 24px;
+            animation: floatSlow 8s ease-in-out infinite 1s;
+        }
+
+        /* Captain Serving Station Node: Bottom-Right */
+        .node-captain {
+            bottom: 30px;
+            right: 24px;
+            animation: floatSubtle 6.5s ease-in-out infinite 0.5s;
+        }
+
+        /* Live Dashboard Sync Beacon Node: Top-Right */
+        .node-dashboard-hub {
+            top: 24px;
+            right: 24px;
+            animation: floatSlow 9s ease-in-out infinite 1.5s;
+        }
+
+        /* Micro Glass Cards */
+        .stage-card {
+            background: color-mix(in srgb, var(--card) 94%, transparent);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
+            box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.04);
+            border-radius: 0.9rem;
+            padding: 0.65rem 0.9rem;
+        }
+
+        /* Steam Animation */
+        .steam-wisp {
+            transform-origin: bottom center;
+            animation: steamRise 3s ease-in-out infinite;
+            opacity: 0;
+        }
+
+        .steam-wisp-2 {
+            animation-delay: 1s;
+        }
+
+        .steam-wisp-3 {
+            animation-delay: 2s;
+        }
+
+        /* Cooking pan flame/sizzle glow */
+        .cooking-glow {
+            animation: flameFlicker 1.6s ease-in-out infinite alternate;
+        }
+
+        /* ============================================================
+           PREMIUM 3D RESTAURANT LIFECYCLE SIMULATION (5 STEPS)
+           ============================================================ */
+
+        .sim-3d-card {
+            background: color-mix(in srgb, var(--card) 96%, transparent);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid color-mix(in srgb, var(--line) 90%, transparent);
+            border-radius: 1.25rem;
+            box-shadow: 0 28px 65px -20px rgba(0, 0, 0, 0.18), 0 8px 24px -6px rgba(0, 0, 0, 0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .sim-3d-card:hover {
+            box-shadow: 0 32px 75px -20px color-mix(in srgb, var(--brand) 22%, transparent);
+        }
+
+        /* 3D Perspective Stage */
+        .stage-3d-viewport {
+            position: relative;
+            width: 100%;
+            height: 380px;
+            overflow: hidden;
+            border-radius: 1rem;
+            background: linear-gradient(145deg, color-mix(in srgb, var(--soft) 60%, var(--bg)) 0%, color-mix(in srgb, var(--card) 90%, var(--bg)) 100%);
+            border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+        }
+
+        /* Isometric floor grid */
+        .iso-floor {
+            position: absolute;
+            inset: -40px;
+            background-image:
+                linear-gradient(to right, color-mix(in srgb, var(--fg) 5%, transparent) 1px, transparent 1px),
+                linear-gradient(to bottom, color-mix(in srgb, var(--fg) 5%, transparent) 1px, transparent 1px);
+            background-size: 30px 30px;
+            transform: perspective(600px) rotateX(42deg) scale(1.15);
+            transform-origin: center center;
+            opacity: 0.65;
+            pointer-events: none;
+        }
+
+        /* Step Progress Buttons */
+        .step-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.5rem 0.4rem;
+            border-radius: 0.65rem;
+            font-size: 0.72rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            background: color-mix(in srgb, var(--soft) 50%, transparent);
+            color: var(--mut);
+            border: 1px solid transparent;
+            user-select: none;
+        }
+
+        .step-tab:hover {
+            background: var(--soft);
+            color: var(--fg);
+        }
+
+        .step-tab.active-step {
+            background: color-mix(in srgb, var(--brand) 12%, var(--card));
+            color: var(--brand);
+            border-color: color-mix(in srgb, var(--brand) 30%, transparent);
+            box-shadow: 0 4px 12px -2px color-mix(in srgb, var(--brand) 20%, transparent);
+        }
+
+        .step-progress-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            background: var(--brand);
+            border-radius: 9999px;
+            width: 0%;
+            transition: width 0.1s linear;
+        }
+
+        .step-tab.active-step .step-progress-bar {
+            width: 100%;
+            transition: width 3.5s linear;
+        }
+
+        /* 3D Stations in Viewport */
+        .station-box {
+            transition: filter 0.5s ease;
+            pointer-events: auto;
+        }
+
+        .station-active {
+            filter: drop-shadow(0 0 12px color-mix(in srgb, var(--brand) 65%, transparent));
+        }
+
+        /* Energy stream connecting beam */
+        .energy-beam {
+            position: absolute;
+            pointer-events: none;
+            stroke-dasharray: 8 6;
+            animation: beamTravel 1.5s linear infinite;
+        }
+
+        @keyframes beamTravel {
+            to {
+                stroke-dashoffset: -28;
+            }
+        }
+
+        /* Floating 3D Ticket */
+        .floating-ticket-3d {
+            position: absolute;
+            background: var(--card);
+            border: 1px solid var(--line);
+            border-radius: 0.75rem;
+            padding: 0.5rem 0.75rem;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15);
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            z-index: 20;
+            animation: ticketFloat 3s ease-in-out infinite;
+            transform-style: preserve-3d;
+        }
+
+        @keyframes ticketFloat {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(-1deg);
+            }
+
+            50% {
+                transform: translateY(-8px) rotate(1.5deg);
+            }
+        }
+
+        /* Payment confetti burst / celebration */
+        .payment-burst {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.8);
+            transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+        }
+
+        .payment-burst.active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* Keyframes */
+        @keyframes floatSlow {
+
+            0%,
+            100% {
+                transform: translateY(0px) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-7px) rotate(0.4deg);
+            }
+        }
+
+        @keyframes floatSubtle {
+
+            0%,
+            100% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-5px);
+            }
+        }
+
+        @keyframes steamRise {
+            0% {
+                transform: translateY(0) scaleX(0.8) scaleY(0.8);
+                opacity: 0;
+            }
+
+            30% {
+                opacity: 0.7;
+            }
+
+            70% {
+                opacity: 0.5;
+                transform: translateY(-16px) scaleX(1.3) scaleY(1.2) translateX(2px);
+            }
+
+            100% {
+                transform: translateY(-28px) scaleX(1.7) scaleY(1.4) translateX(-3px);
+                opacity: 0;
+            }
+        }
+
+        @keyframes dashFlow {
+            to {
+                stroke-dashoffset: -240;
+            }
+        }
+
+        @keyframes flameFlicker {
+            0% {
+                transform: scale(0.95);
+                opacity: 0.7;
+            }
+
+            100% {
+                transform: scale(1.08);
+                opacity: 1;
+            }
+        }
+
+        @keyframes pingRing {
+
+            75%,
+            100% {
+                transform: scale(2.2);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                opacity: 0.55;
+                transform: scale(0.96);
+            }
+
+            100% {
+                opacity: 0.95;
+                transform: scale(1.06);
+            }
+        }
+
+        @keyframes trayBob {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-3px) rotate(1.5deg);
+            }
+        }
+
+        .animated-tray {
+            animation: trayBob 3s ease-in-out infinite;
+        }
+
+        /* Responsive adjustments for mobile/tablets */
+        @media (max-width: 1200px) {
+            .node-orders {
+                display: none;
+            }
+
+            .node-kitchen {
+                top: 10px;
+                left: 10px;
+                transform: scale(0.9);
+            }
+
+            .node-dashboard-hub {
+                top: 10px;
+                right: 10px;
+                transform: scale(0.9);
+            }
+
+            .node-captain {
+                bottom: 10px;
+                right: 10px;
+                transform: scale(0.9);
+            }
+        }
+
+        @media (max-width: 900px) {
+
+            .node-kitchen,
+            .node-captain,
+            .node-dashboard-hub,
+            .workflow-svg-layer {
+                display: none;
+            }
+
+            .ambient-glow-1,
+            .ambient-glow-2 {
+                width: 320px;
+                height: 320px;
+                filter: blur(40px);
+            }
+        }
+
+        /* Accessibility: respect reduced motion preferences */
+        @media(prefers-reduced-motion:reduce) {
+
+            *,
+            ::before,
+            ::after {
+                transition: none !important;
+                animation: none !important;
+                scroll-behavior: auto !important
+            }
+
+            .rv {
+                opacity: 1;
+                transform: none
+            }
+
+            .ambient-glow-1,
+            .ambient-glow-2,
+            .flow-line,
+            .node-kitchen,
+            .node-orders,
+            .node-captain,
+            .node-dashboard-hub,
+            .steam-wisp,
+            .animated-tray,
+            .pulse-ring::after {
+                animation: none !important;
+            }
+
+            .steam-wisp {
+                opacity: 0.4;
+                transform: translateY(-10px);
+            }
+        }
+    </style>
+
+
+    <style id="sb-css">
+        .sb {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 50%;
+            width: 100vw;
+            transform: translateX(-50%);
+            overflow: hidden;
+            pointer-events: none;
+            z-index: -1;
+            contain: layout paint style
+        }
+
+        .sb.sb-card {
+            left: 0;
+            width: 100%;
+            transform: none;
+            border-radius: inherit
+        }
+
+        .sb-wrap {
+            position: relative;
+            overflow: hidden;
+            isolation: isolate
+        }
+
+        .sb:not(.on) *,
+        .sb:not(.on) *::before,
+        .sb:not(.on) *::after {
+            animation-play-state: paused !important
+        }
+
+        .sb-svg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%
+        }
+
+        .sb-dots {
+            position: absolute;
+            inset: 0;
+            opacity: .6;
+            background-image: radial-gradient(color-mix(in srgb, var(--fg) 12%, transparent) 1px, transparent 1.3px);
+            background-size: 26px 26px;
+            -webkit-mask-image: linear-gradient(#000, transparent 70%);
+            mask-image: linear-gradient(#000, transparent 70%)
+        }
+
+        .sb-orb {
+            position: absolute;
+            width: 520px;
+            height: 520px;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--c, var(--brand)) 16%, transparent), transparent 65%);
+            animation: sb-drift 18s ease-in-out infinite alternate
+        }
+
+        @keyframes sb-drift {
+            to {
+                transform: translate(70px, 40px) scale(1.14)
+            }
+        }
+
+        .sb-pt {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--brand);
+            opacity: .45
+        }
+
+        .sb-pt::before,
+        .sb-pt::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 1.5px solid var(--brand);
+            animation: sb-ring 4s ease-out infinite
+        }
+
+        .sb-pt::after {
+            animation-delay: 2s
+        }
+
+        @keyframes sb-ring {
+            0% {
+                transform: scale(1);
+                opacity: .55
+            }
+
+            100% {
+                transform: scale(8);
+                opacity: 0
+            }
+        }
+
+        .sb-path {
+            fill: none;
+            stroke: color-mix(in srgb, var(--brand) 34%, transparent);
+            stroke-width: 2;
+            stroke-dasharray: 7 9;
+            vector-effect: non-scaling-stroke;
+            animation: sb-dash 6s linear infinite
+        }
+
+        .sb-slow {
+            animation-duration: 10s;
+            opacity: .5
+        }
+
+        @keyframes sb-dash {
+            to {
+                stroke-dashoffset: -64
+            }
+        }
+
+        .sb-dot {
+            fill: var(--brand);
+            filter: drop-shadow(0 0 6px var(--brand))
+        }
+
+        .sb-chip {
+            position: absolute;
+            padding: 5px 10px;
+            border-radius: 999px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            font: 600 11px Inter, sans-serif;
+            color: var(--brand);
+            white-space: nowrap;
+            opacity: 0;
+            animation: sb-chip 9s ease-in-out infinite
+        }
+
+        @keyframes sb-chip {
+            0% {
+                transform: translateY(40px);
+                opacity: 0
+            }
+
+            15%,
+            70% {
+                opacity: .95
+            }
+
+            100% {
+                transform: translateY(-70px);
+                opacity: 0
+            }
+        }
+
+        .sb-rail {
+            position: absolute;
+            top: 12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--fg) 22%, transparent) 8%, color-mix(in srgb, var(--fg) 22%, transparent) 92%, transparent)
+        }
+
+        .sb-tk {
+            position: absolute;
+            top: 12px;
+            width: 34px;
+            height: 46px;
+            border-radius: 2px 2px 6px 6px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            transform-origin: 50% 0;
+            animation: sb-drop .9s cubic-bezier(.2, .8, .2, 1) var(--d) both, sb-swing var(--s) ease-in-out calc(var(--d) + .9s) infinite alternate
+        }
+
+        .sb-tk::before {
+            content: "";
+            position: absolute;
+            left: 6px;
+            right: 6px;
+            top: 8px;
+            height: 3px;
+            border-radius: 2px;
+            background: var(--brand);
+            opacity: .6;
+            box-shadow: 0 7px 0 var(--line), 0 14px 0 var(--line), 0 21px 0 var(--line)
+        }
+
+        @keyframes sb-drop {
+            from {
+                transform: translateY(-70px);
+                opacity: 0
+            }
+
+            to {
+                transform: none;
+                opacity: 1
+            }
+        }
+
+        @keyframes sb-swing {
+            from {
+                transform: rotate(-4deg)
+            }
+
+            to {
+                transform: rotate(4deg)
+            }
+        }
+
+        .sb-line {
+            fill: none;
+            stroke: color-mix(in srgb, var(--brand) 55%, transparent);
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-dasharray: 1 1;
+            animation: sb-draw 9s ease-in-out infinite
+        }
+
+        @keyframes sb-draw {
+            0% {
+                stroke-dashoffset: 1
+            }
+
+            55%,
+            92% {
+                stroke-dashoffset: 0
+            }
+
+            100% {
+                stroke-dashoffset: -1
+            }
+        }
+
+        .sb-area {
+            animation: sb-fade 9s ease-in-out infinite
+        }
+
+        @keyframes sb-fade {
+
+            0%,
+            10% {
+                opacity: 0
+            }
+
+            55%,
+            92% {
+                opacity: 1
+            }
+
+            100% {
+                opacity: 0
+            }
+        }
+
+        .sb-bars {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            height: 34%;
+            display: flex;
+            align-items: flex-end;
+            gap: 1.2%;
+            padding: 0 2%;
+            opacity: .7;
+            -webkit-mask-image: linear-gradient(to top, #000 30%, transparent);
+            mask-image: linear-gradient(to top, #000 30%, transparent)
+        }
+
+        .sb-bars i {
+            flex: 1;
+            height: var(--h);
+            border-radius: 6px 6px 0 0;
+            background: linear-gradient(to top, color-mix(in srgb, var(--brand) 24%, transparent), transparent);
+            transform-origin: bottom;
+            animation: sb-grow 5s ease-in-out infinite alternate;
+            animation-delay: var(--d)
+        }
+
+        @keyframes sb-grow {
+            from {
+                transform: scaleY(.55)
+            }
+
+            to {
+                transform: scaleY(1)
+            }
+        }
+
+        .sb-belt {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 22px;
+            height: 2px;
+            background: repeating-linear-gradient(90deg, color-mix(in srgb, var(--fg) 18%, transparent) 0 10px, transparent 10px 18px)
+        }
+
+        .sb-pl {
+            position: absolute;
+            left: -50px;
+            bottom: 24px;
+            width: 30px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--card);
+            border: 1px solid var(--line);
+            animation: sb-belt 24s linear infinite
+        }
+
+        .sb-pl::before {
+            content: "";
+            position: absolute;
+            left: 7px;
+            bottom: 4px;
+            width: 14px;
+            height: 9px;
+            border-radius: 14px 14px 0 0;
+            background: var(--brand);
+            opacity: .6
+        }
+
+        .sb-pl::after {
+            content: "";
+            position: absolute;
+            left: 12px;
+            bottom: 14px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--mut);
+            opacity: 0;
+            animation: sb-puff 3s ease-out infinite
+        }
+
+        @keyframes sb-belt {
+            to {
+                transform: translateX(calc(100vw + 100px))
+            }
+        }
+
+        @keyframes sb-puff {
+            0% {
+                transform: translateY(0) scale(.5);
+                opacity: 0
+            }
+
+            30% {
+                opacity: .35
+            }
+
+            100% {
+                transform: translateY(-20px) scale(2);
+                opacity: 0
+            }
+        }
+
+        .sb-ck {
+            position: absolute;
+            bottom: -30px;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            background: color-mix(in srgb, var(--ok) 15%, transparent);
+            opacity: 0;
+            animation: sb-rise 16s linear infinite
+        }
+
+        .sb-ck::after {
+            content: "";
+            position: absolute;
+            left: 8px;
+            top: 4px;
+            width: 5px;
+            height: 10px;
+            border: solid var(--ok);
+            border-width: 0 2px 2px 0;
+            transform: rotate(45deg)
+        }
+
+        @keyframes sb-rise {
+            0% {
+                transform: translateY(0);
+                opacity: 0
+            }
+
+            10% {
+                opacity: .8
+            }
+
+            90% {
+                opacity: .5
+            }
+
+            100% {
+                transform: translateY(-110vh);
+                opacity: 0
+            }
+        }
+
+        .sb-qb {
+            position: absolute;
+            width: 38px;
+            height: 30px;
+            border-radius: 10px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            display: grid;
+            place-items: center;
+            animation: sb-bob 7s ease-in-out infinite alternate
+        }
+
+        .sb-qb::before {
+            content: "?";
+            font: 700 14px 'Plus Jakarta Sans', sans-serif;
+            color: color-mix(in srgb, var(--brand) 70%, transparent)
+        }
+
+        @keyframes sb-bob {
+            to {
+                transform: translateY(-14px) rotate(3deg)
+            }
+        }
+
+        .sb-ty {
+            position: absolute;
+            display: flex;
+            gap: 4px;
+            padding: 10px 12px;
+            border-radius: 14px;
+            background: var(--card);
+            border: 1px solid var(--line);
+            animation: sb-bob 6s ease-in-out infinite alternate
+        }
+
+        .sb-ty b {
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--mut);
+            animation: sb-dotb 1.2s ease-in-out infinite
+        }
+
+        .sb-ty b:nth-child(2) {
+            animation-delay: .15s
+        }
+
+        .sb-ty b:nth-child(3) {
+            animation-delay: .3s
+        }
+
+        @keyframes sb-dotb {
+
+            0%,
+            60%,
+            100% {
+                transform: translateY(0);
+                opacity: .4
+            }
+
+            30% {
+                transform: translateY(-4px);
+                opacity: 1
+            }
+        }
+
+        .sb-glow {
+            position: absolute;
+            left: 50%;
+            top: -45%;
+            width: 70%;
+            aspect-ratio: 1;
+            border-radius: 50%;
+            background: radial-gradient(circle, color-mix(in srgb, var(--brand) 38%, transparent), transparent 65%);
+            animation: sb-glow 8s ease-in-out infinite alternate
+        }
+
+        @keyframes sb-glow {
+            from {
+                opacity: .5;
+                transform: translateX(-50%) scale(.95)
+            }
+
+            to {
+                opacity: .9;
+                transform: translateX(-50%) scale(1.08)
+            }
+        }
+
+        .sb-sheen {
+            position: absolute;
+            top: -20%;
+            bottom: -20%;
+            left: -30%;
+            width: 25%;
+            background: linear-gradient(100deg, transparent, rgba(255, 255, 255, .09), transparent);
+            animation: sb-sheen 7s ease-in-out infinite
+        }
+
+        @keyframes sb-sheen {
+
+            0%,
+            50% {
+                transform: translateX(0) skewX(-18deg)
+            }
+
+            100% {
+                transform: translateX(560%) skewX(-18deg)
+            }
+        }
+
+        .sb-em {
+            position: absolute;
+            bottom: -8px;
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            background: var(--brand);
+            opacity: 0;
+            animation: sb-emb 9s linear infinite
+        }
+
+        @keyframes sb-emb {
+            0% {
+                transform: translateY(0);
+                opacity: 0
+            }
+
+            15% {
+                opacity: .5
+            }
+
+            100% {
+                transform: translateY(-340px);
+                opacity: 0
+            }
+        }
+
+        @media(max-width:1100px) {
+            .sb-chip {
+                display: none
+            }
+        }
+
+        @media(max-width:900px) {
+
+            .sb-qb,
+            .sb-ty {
+                display: none
+            }
+        }
+
+        @media(max-width:640px) {
+            .sb-hm {
+                display: none
+            }
+        }
+
+        @media(prefers-reduced-motion:reduce) {
+            .sb {
+                display: none
+            }
+        }
+    </style>
+
+
+
+</head>
+
+<body>
+
+    <div id="ann" class="text-center text-sm py-2 px-10 relative" style="background:var(--fg);color:var(--bg)">
+        Manage your restaurant smarter with Transserve.
+        <button id="annx" aria-label="Dismiss announcement"
+            class="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg text-lg leading-none">×</button>
+    </div>
+
+    <header class="sticky top-0 z-40 border-b border-line"
+        style="background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px)">
+        <nav class="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between" aria-label="Main">
+            <a href="#top" class="flex items-center gap-2.5 fh font-extrabold text-lg">
+                <span class="w-36 h-9 rounded-lg grid place-items-center  text-white shadow-sm flex-shrink-0">
+                    <img src="./img/Clean Transserve Brand Logo.svg" alt="Icon" style="position: relative; top: -6px;">
+                </span></a>
+            <ul id="links" class="hidden md:flex items-center gap-7 text-sm font-medium text-mut"></ul>
+            <div class="hidden md:flex items-center gap-3">
+                <a data-cfg="login" class="text-sm font-semibold px-3 py-2 cursor-pointer">Login</a>
+                <a data-cfg="register" class="btn btn-p cursor-pointer">Get Started</a>
+            </div>
+            <button id="burger" class="md:hidden w-11 h-11 grid place-items-center rounded-lg border border-line"
+                aria-label="Open menu" aria-expanded="false" aria-controls="mnav">
+                <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 6h16M3 11h16M3 16h16" />
+                </svg>
+            </button>
+        </nav>
+        <div id="mnav" class="hidden md:hidden border-t border-line px-4 py-3 space-y-1" style="background:var(--bg)">
+            <div id="mlinks"></div>
+            <div class="grid grid-cols-2 gap-3 pt-3"><a data-cfg="login" class="btn btn-s">Login</a><a
+                    data-cfg="register" class="btn btn-p">Get Started</a></div>
+        </div>
+    </header>
+
+    <main id="top">
+        <!-- HERO WITH PREMIUM ANIMATED RESTAURANT BACKGROUND -->
+        <div class="hero-stage-wrapper">
+            <!-- Ambient Blueprint Pattern & Warm Lighting -->
+            <div class="ambient-grid"></div>
+            <div class="ambient-glow-1"></div>
+            <div class="ambient-glow-2"></div>
+
+            <!-- Animated Restaurant Operation Workflow Stage (Chef -> Order Stream -> Captain -> Dashboard) -->
+            <div class="restaurant-stage" aria-hidden="true">
+                <div class="stage-inner">
+                    <!-- SVG Network Connecting Lines with Animated Pulses -->
+                    <svg class="workflow-svg-layer" viewBox="0 0 1280 760" preserveAspectRatio="xMidYMid slice"
+                        fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="flowGrad1" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#e4572e" stop-opacity="0.4" />
+                                <stop offset="50%" stop-color="#e4572e" stop-opacity="0.8" />
+                                <stop offset="100%" stop-color="#1f9d63" stop-opacity="0.5" />
+                            </linearGradient>
+                            <linearGradient id="flowGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#2f6fd6" stop-opacity="0.4" />
+                                <stop offset="60%" stop-color="#e4572e" stop-opacity="0.75" />
+                                <stop offset="100%" stop-color="#e4572e" stop-opacity="0.4" />
+                            </linearGradient>
+                        </defs>
+
+                        <!-- Path 1: Kitchen / Chef to Floating Order Workflow -->
+                        <path class="flow-line" d="M 170 90 C 110 250, 110 470, 170 650" stroke="url(#flowGrad1)" />
+                        <!-- Path 2: Order Workflow to Live Dashboard -->
+                        <path class="flow-line" d="M 230 650 C 460 700, 840 220, 1070 85" stroke="url(#flowGrad2)" />
+                        <!-- Path 3: Dashboard to Captain Service -->
+                        <path class="flow-line" d="M 1110 85 C 1180 250, 1180 470, 1110 650" stroke="url(#flowGrad1)" />
+                        <!-- Path 4: Captain back to Kitchen -->
+                        <path class="flow-line" d="M 1060 650 C 840 690, 460 210, 230 85" stroke="url(#flowGrad2)"
+                            stroke-dasharray="4 8" />
+
+                        <!-- Traveling Light Packets (Animated along paths) -->
+                        <circle r="4" class="flow-packet">
+                            <animateMotion dur="5.5s" repeatCount="indefinite"
+                                path="M 170 90 C 110 250, 110 470, 170 650" />
+                        </circle>
+                        <circle r="3.5" class="flow-packet" fill="#2f6fd6">
+                            <animateMotion dur="7.5s" repeatCount="indefinite"
+                                path="M 230 650 C 460 700, 840 220, 1070 85" />
+                        </circle>
+                        <circle r="4" class="flow-packet" fill="#1f9d63">
+                            <animateMotion dur="6.5s" repeatCount="indefinite"
+                                path="M 1110 85 C 1180 250, 1180 470, 1110 650" />
+                        </circle>
+                        <circle r="3.5" class="flow-packet" fill="#e4572e">
+                            <animateMotion dur="8.5s" repeatCount="indefinite"
+                                path="M 1060 650 C 840 690, 460 210, 230 85" />
+                        </circle>
+                    </svg>
+
+                    <!-- OPERATIONAL NODE 1: Chef Cooking Station (Kitchen Scene + Rising Steam) -->
+                    <div class="op-node node-kitchen">
+                        <div class="stage-card flex items-center gap-3">
+                            <!-- Stylized Chef & Cooking Station SVG -->
+                            <div
+                                class="relative w-14 h-14 flex items-center justify-center rounded-xl bg-orange-500/10 border border-orange-500/20">
+                                <!-- Rising Steam Wisps -->
+                                <svg class="absolute -top-6 left-1/2 -translate-x-1/2 w-10 h-10 overflow-visible"
+                                    viewBox="0 0 40 40">
+                                    <path class="steam-wisp" d="M 14 36 C 11 28, 17 22, 14 14" stroke="#e4572e"
+                                        stroke-width="2" stroke-linecap="round" fill="none" />
+                                    <path class="steam-wisp steam-wisp-2" d="M 20 38 C 24 29, 16 23, 20 12"
+                                        stroke="#e4572e" stroke-width="2.2" stroke-linecap="round" fill="none" />
+                                    <path class="steam-wisp steam-wisp-3" d="M 27 36 C 24 27, 30 20, 26 13"
+                                        stroke="#e4572e" stroke-width="1.8" stroke-linecap="round" fill="none" />
+                                </svg>
+
+                                <!-- Chef & Stove / Skillet Illustration -->
+                                <svg width="34" height="34" viewBox="0 0 34 34" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Chef Toque Hat -->
+                                    <path
+                                        d="M12 12C10.5 12 9.5 10.5 10 9C9.5 7.5 10.5 5.5 12.5 5.5C13.5 4.5 16 4.5 17 5.5C18 4.5 20.5 4.5 21.5 5.5C23.5 5.5 24.5 7.5 24 9C24.5 10.5 23.5 12 22 12H12Z"
+                                        fill="#e4572e" fill-opacity="0.2" stroke="#e4572e" stroke-width="1.5"
+                                        stroke-linejoin="round" />
+                                    <path d="M11.5 12H22.5V14.5H11.5V12Z" fill="#e4572e" />
+                                    <!-- Chef Face / Profile silhouette -->
+                                    <circle cx="17" cy="18" r="3.2" stroke="var(--fg)" stroke-width="1.3" />
+                                    <!-- Cooking Pan with Flame -->
+                                    <path d="M6 25H22C22 28.5 18.5 30 14 30C9.5 30 6 28.5 6 25Z" fill="var(--fg)"
+                                        fill-opacity="0.8" />
+                                    <line x1="22" y1="26" x2="28" y2="28" stroke="var(--fg)" stroke-width="2.2"
+                                        stroke-linecap="round" />
+                                    <!-- Pan Sizzle Food / Flame -->
+                                    <circle cx="11" cy="24" r="1.5" fill="#e4572e" class="cooking-glow" />
+                                    <circle cx="16" cy="23.5" r="1.8" fill="#d98a0b" class="cooking-glow" />
+                                    <circle cx="14" cy="22" r="1.2" fill="#e4572e" />
+                                </svg>
+                            </div>
+                            <div class="pr-2">
+                                <div class="flex items-center gap-1.5">
+                                    <span class="w-2 h-2 rounded-full bg-amber-500 pulse-ring text-amber-500"></span>
+                                    <span class="text-xs font-bold tracking-tight">Kitchen Display</span>
+                                </div>
+                                <p class="text-[11px] text-mut mt-0.5">Table 4 · Paneer Tikka</p>
+                                <span
+                                    class="inline-block mt-1 text-[10px] font-semibold text-amber-700 bg-amber-100 dark:bg-amber-900/40 dark:text-amber-300 px-1.5 py-0.5 rounded">Preparing
+                                    · 4m</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OPERATIONAL NODE 2: Live Order Workflow (New -> Preparing -> Ready) -->
+                    <div class="op-node node-orders">
+                        <div
+                            class="text-[10px] font-bold text-mut tracking-wider uppercase pl-1 mb-1.5 flex items-center gap-1">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                            </svg>
+                            Live Order Pipeline
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <!-- Order 1: New -->
+                            <div
+                                class="stage-card flex items-center justify-between gap-3 min-w-[215px] transition-all">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                                    <span class="text-xs font-bold">#1045</span>
+                                    <span class="text-[11px] text-mut">Table 2</span>
+                                </div>
+                                <span
+                                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300">New
+                                    Order</span>
+                            </div>
+                            <!-- Order 2: Preparing -->
+                            <div
+                                class="stage-card flex items-center justify-between gap-3 min-w-[215px] border-l-2 border-l-amber-500">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                                    <span class="text-xs font-bold">#1044</span>
+                                    <span class="text-[11px] text-mut">Table 4</span>
+                                </div>
+                                <span
+                                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 flex items-center gap-1">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span> Cooking
+                                </span>
+                            </div>
+                            <!-- Order 3: Ready to Serve -->
+                            <div
+                                class="stage-card flex items-center justify-between gap-3 min-w-[215px] border-l-2 border-l-emerald-500">
+                                <div class="flex items-center gap-2">
+                                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                                    <span class="text-xs font-bold">#1043</span>
+                                    <span class="text-[11px] text-mut">Table 7</span>
+                                </div>
+                                <span
+                                    class="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
+                                    <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                        stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12" />
+                                    </svg>
+                                    Ready to Serve
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OPERATIONAL NODE 3: Captain Serving Food (Tray + Delivery Beacon) -->
+                    <div class="op-node node-captain">
+                        <div class="stage-card flex items-center gap-3">
+                            <!-- Captain with Serving Tray Graphic -->
+                            <div
+                                class="relative w-12 h-12 flex items-center justify-center rounded-xl bg-emerald-500/10 border border-emerald-500/20">
+                                <svg width="32" height="32" viewBox="0 0 32 32" fill="none"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <!-- Captain Figure Silhouette -->
+                                    <circle cx="16" cy="9" r="3.5" fill="var(--fg)" fill-opacity="0.8" />
+                                    <path d="M11 25V18C11 15.5 13 14 16 14C19 14 21 15.5 21 18V25" stroke="var(--fg)"
+                                        stroke-width="1.8" stroke-linecap="round" />
+                                    <!-- Bowtie -->
+                                    <path d="M14.5 14.5L17.5 15.5M17.5 14.5L14.5 15.5" stroke="#e4572e"
+                                        stroke-width="1.5" />
+                                    <!-- Serving Tray & Cloche (Animated gentle bob) -->
+                                    <g class="animated-tray">
+                                        <line x1="17" y1="17" x2="26" y2="17" stroke="var(--fg)" stroke-width="2"
+                                            stroke-linecap="round" />
+                                        <!-- Cloche dome -->
+                                        <path d="M19 17C19 13.8 24 13.8 24 17Z" fill="#e4572e" fill-opacity="0.85" />
+                                        <circle cx="21.5" cy="13.2" r="1.1" fill="#e4572e" />
+                                    </g>
+                                </svg>
+                            </div>
+                            <div class="pr-2">
+                                <div class="flex items-center gap-1.5">
+                                    <span
+                                        class="w-2 h-2 rounded-full bg-emerald-500 pulse-ring text-emerald-500"></span>
+                                    <span class="text-xs font-bold tracking-tight">Captain Service</span>
+                                </div>
+                                <p class="text-[11px] text-mut mt-0.5">Assigned: Table 4</p>
+                                <span
+                                    class="inline-block mt-1 text-[10px] font-semibold text-emerald-700 bg-emerald-100 dark:bg-emerald-900/40 dark:text-emerald-300 px-1.5 py-0.5 rounded">Serving
+                                    order now</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- OPERATIONAL NODE 4: Live Restaurant Management Hub & Telemetry -->
+                    <div class="op-node node-dashboard-hub">
+                        <div class="stage-card flex items-center gap-3">
+                            <div
+                                class="w-10 h-10 rounded-xl bg-brand/10 border border-brand/20 flex items-center justify-center text-brand">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="2" y="3" width="20" height="14" rx="2" ry="2" />
+                                    <line x1="8" y1="21" x2="16" y2="21" />
+                                    <line x1="12" y1="17" x2="12" y2="21" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold">Restaurant Live Sync</span>
+                                    <span
+                                        class="pill bg-emerald-100 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300 text-[9px] py-0">POS
+                                        ACTIVE</span>
+                                </div>
+                                <div class="flex items-center gap-3 mt-1 text-[11px] text-mut">
+                                    <span>Tables: <strong class="text-fg">8 / 10</strong></span>
+                                    <span>•</span>
+                                    <span>Turnaround: <strong
+                                            class="text-emerald-600 dark:text-emerald-400">14m</strong></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- HERO CONTENT (Main Foreground Layer) -->
+            <section
+                class="max-w-6xl mx-auto px-4 pt-14 pb-24 md:pt-20 md:pb-28 grid lg:grid-cols-2 gap-12 items-center relative z-10">
+                <div>
+                    <p class="inline-flex items-center gap-2 pill bg-soft text-mut mb-4 border border-line"
+                        style="background:var(--soft)">
+                        <span class="w-2 h-2 rounded-full bg-brand"></span>
+                        Restaurant Management Platform
+                    </p>
+                    <h1 class="text-4xl sm:text-5xl font-extrabold leading-[1.1] tracking-tight">Run Your Restaurant.
+                        Not
+                        the Chaos.</h1>
+                    <p class="mt-5 text-lg text-mut max-w-xl">Manage orders, tables, billing, menu items and daily
+                        restaurant operations with Transserve—built to help your team work smarter and serve customers
+                        faster.
+                    </p>
+                    <div class="mt-8 flex flex-col sm:flex-row gap-3">
+                        <a data-cfg="register" class="btn btn-p cursor-pointer">Get Started</a>
+                        <a href="#features" class="btn btn-s">Explore Features</a>
+                    </div>
+                    <div class="mt-6 flex items-center gap-4 text-xs text-mut font-medium">
+                        <span class="flex items-center gap-1.5">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" class="text-brand">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            Kitchen & Captain Connected
+                        </span>
+                        <span class="flex items-center gap-1.5">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2.5" class="text-brand">
+                                <polyline points="20 6 9 17 4 12" />
+                            </svg>
+                            Instant POS & Billing
+                        </span>
+                    </div>
+                </div>
+                <div id="heromock" class="rv"></div>
+            </section>
+        </div>
+
+        <!-- FEATURES -->
+        <section id="features" class="py-16 relative z-10" style="background:var(--soft)">
+            <div class="max-w-6xl mx-auto px-4">
+                <div class="max-w-2xl">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Everything your floor and counter
+                        need</h2>
+                    <p class="mt-3 text-mut">One platform for the daily work of running a restaurant or café. Feature
+                        availability may vary by plan.</p>
+                </div>
+                <div id="fgrid" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+            </div>
+        </section>
+
+        <!-- HOW -->
+        <section id="how" class="py-16 max-w-6xl mx-auto px-4 relative z-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">How Transserve Works</h2>
+            <div id="steps" class="mt-10 grid md:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- PRODUCT / OWNER -->
+        <section id="product" class="py-16 relative z-10" style="background:var(--soft)">
+            <div class="max-w-6xl mx-auto px-4 grid lg:grid-cols-5 gap-10 items-center">
+                <div class="lg:col-span-2">
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Stay in Control of Your Restaurant.
+                    </h2>
+                    <p class="mt-4 text-mut">Live orders, table monitoring, billing and payments, menu management and a
+                        sales overview—together in one owner dashboard.</p>
+                    <ul class="mt-5 space-y-2 text-sm" id="ownerlist"></ul>
+                    <a data-cfg="login" class="btn btn-p mt-7 cursor-pointer">Access Restaurant Dashboard</a>
+                </div>
+                <div class="lg:col-span-3" id="ownmock"></div>
+            </div>
+        </section>
+
+        <!-- CAPTAIN -->
+        <section id="captain" class="py-16 max-w-6xl mx-auto px-4 relative z-10">
+            <div class="max-w-2xl">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Your Service Team, Connected.</h2>
+                <p class="mt-3 text-mut">Help your captain and service staff manage table orders and restaurant
+                    workflows from their Android device.</p>
+            </div>
+            <div class="mt-10 grid md:grid-cols-2 gap-5">
+                <article class="card p-6 flex flex-col">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-4" style="background:var(--soft)"
+                        data-ic="store"></div>
+                    <h3 class="text-xl font-bold">Restaurant Owner Panel</h3>
+                    <p class="mt-2 text-mut flex-1">Manage restaurant operations, orders, menu, billing and staff from
+                        the web dashboard.</p>
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3"><a data-cfg="login"
+                            class="btn btn-p cursor-pointer">Open Owner
+                            Login</a><a data-cfg="register" class="btn btn-s cursor-pointer">Get Started</a></div>
+                </article>
+                <article class="card p-6 flex flex-col">
+                    <div class="w-11 h-11 rounded-xl grid place-items-center mb-4" style="background:var(--soft)"
+                        data-ic="phone"></div>
+                    <h3 class="text-xl font-bold">Transserve Captain App</h3>
+                    <p class="mt-2 text-mut">Give your service staff a convenient mobile workflow for handling assigned
+                        restaurant orders and table service.</p>
+                    <div class="mt-6 flex flex-col sm:flex-row gap-3">
+                        <a id="apkbtn" class="btn btn-p"></a><a id="capLogin" data-cfg="captainLogin"
+                            class="btn btn-s">Open Captain Login</a>
+                    </div>
+                    <div id="qrwrap" class="hidden mt-6 items-center gap-4">
+                        <div id="qr" class="p-2 bg-white rounded-lg"></div>
+                        <p class="text-sm text-mut">Scan to download on your Android device.</p>
+                    </div>
+                    <p class="mt-4 text-xs text-mut">Download the APK on your Android device and follow the installation
+                        instructions shown by your device.</p>
+                </article>
+            </div>
+        </section>
+
+        <!-- WORKFLOW -->
+        <section class="py-16 relative z-10" style="background:var(--soft)">
+            <div class="max-w-6xl mx-auto px-4">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">From order to payment, in one flow</h2>
+                <ol id="flow" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-5 gap-4"></ol>
+                <p class="mt-4 text-xs text-mut">Payments are recorded by your team; opening a UPI link is not treated
+                    as verified payment.</p>
+            </div>
+        </section>
+
+        <!-- BENEFITS -->
+        <section class="py-16 max-w-6xl mx-auto px-4 relative z-10">
+            <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Practical benefits for daily service</h2>
+            <div id="ben" class="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+        </section>
+
+        <!-- FAQ -->
+        <section id="faq" class="py-16 relative z-10" style="background:var(--soft)">
+            <div class="max-w-3xl mx-auto px-4">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-center">Frequently asked questions
+                </h2>
+                <div id="faqlist" class="mt-10 space-y-3"></div>
+            </div>
+        </section>
+
+        <!-- FINAL CTA -->
+        <section class="py-16 max-w-6xl mx-auto px-4 relative z-10">
+            <div class="rounded-3xl px-6 py-14 text-center" style="background:var(--fg);color:var(--bg)">
+                <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">Make Your Restaurant Operations Simpler.
+                </h2>
+                <p class="mt-3 opacity-75 max-w-xl mx-auto">Explore Transserve and bring your restaurant workflows into
+                    one organized platform.</p>
+                <div class="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
+                    <a data-cfg="register" class="btn btn-p cursor-pointer">Get Started</a>
+                    <a data-cfg="login" class="btn cursor-pointer"
+                        style="background:transparent;border:1px solid currentColor">Access
+                        Owner Panel</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-line relative z-10">
+        <div class="max-w-6xl mx-auto px-4 py-12 grid sm:grid-cols-2 lg:grid-cols-4 gap-8 text-sm">
+            <div class="lg:col-span-2"><a href="#top" class="flex items-center gap-2.5 fh font-extrabold text-lg">
+                    <span class="w-8 h-8 rounded-lg grid place-items-center  text-white shadow-sm flex-shrink-0">
+                        <img src="./img/Transserve__1_-removebg-preview.png" alt="Icon">
+                    </span>Transserve</a>
+                <p class="mt-3 text-mut max-w-sm">Restaurant management software for orders, tables, billing and menus.
+                </p>
+            </div>
+            <div>
+                <h3 class="font-bold mb-3">Product</h3>
+                <ul class="space-y-2 text-mut">
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#how">How It Works</a></li>
+                    <li><a href="#captain">Captain App</a></li>
+                    <li><a data-cfg="login" class="cursor-pointer">Owner Login</a></li>
+                </ul>
+            </div>
+            <div>
+                <h3 class="font-bold mb-3">Company</h3>
+                <ul id="flinks" class="space-y-2 text-mut"></ul>
+            </div>
+        </div>
+        <p class="text-center text-xs text-mut pb-8">© <span id="yr"></span> Transserve. All rights reserved.</p>
+    </footer>
+
+    <script>
+        /* ===== CONFIG: fill with real values. Empty = hidden / "coming soon" ===== */
+        const CFG = {
+            login: 'https://chotu-frontend-ngph.onrender.com/',            // owner login route e.g. '/login'
+            register: 'https://chotu-frontend-ngph.onrender.com/',         // registration route e.g. '/register'
+            captainLogin: '',     // captain login route, optional
+            apkUrl: 'https://expo.dev/accounts/raju005/projects/captain-app/builds/25829aac-479a-465b-8443-23094ae79b02',           // public APK URL (e.g. VITE_CAPTAIN_APK_URL)
+            contactEmail: 'chotupro.official@gmail.com',     // real contact email
+            privacyUrl: '',       // real privacy page
+            termsUrl: ''          // real terms page
+        };
+        const $ = s => document.querySelector(s);
+        const IC = {
+            list: 'M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01',
+            bill: 'M6 2h12v20l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6',
+            grid: 'M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z',
+            menu: 'M4 4h16v4H4zM4 12h10M4 16h10M4 20h10',
+            user: 'M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0',
+            pay: 'M2 6h20v12H2zM2 10h20M6 15h4',
+            tag: 'M3 12V3h9l9 9-9 9zM7.5 7.5h.01',
+            chart: 'M4 20V10M10 20V4M16 20v-8M22 20H2',
+            gear: 'M12 15a3 3 0 100-6 3 3 0 000 6zM19 12l2-1-2-4-2 1-2-1V5H9v2L7 8 5 7 3 11l2 1v2l-2 1 2 4 2-1 2 1v2h6v-2l2-1 2 1 2-4-2-1z',
+            store: 'M3 9l2-5h14l2 5M4 9v11h16V9M9 20v-6h6v6',
+            phone: 'M7 2h10v20H7zM11 18h2',
+            check: 'M5 12l5 5 9-10',
+            chev: 'M6 9l6 6 6-6'
+        };
+        const ic = (n, s = 22) => `<svg width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="${IC[n]}"/></svg>`;
+        document.querySelectorAll('[data-ic]').forEach(e => e.innerHTML = ic(e.dataset.ic, 24));
+
+        const NAV = [['Product', '#product'], ['Features', '#features'], ['How It Works', '#how'], ['Captain App', '#captain'], ['FAQ', '#faq']];
+        $('#links').innerHTML = NAV.map(([t, h]) => `<li><a class="hover:text-fg transition-colors py-2" href="${h}">${t}</a></li>`).join('');
+        $('#mlinks').innerHTML = NAV.map(([t, h]) => `<a class="block py-3 font-medium" href="${h}">${t}</a>`).join('');
+        const burger = $('#burger'), mnav = $('#mnav');
+        burger.onclick = () => { const o = mnav.classList.toggle('hidden') === false; burger.setAttribute('aria-expanded', o) };
+        mnav.addEventListener('click', e => { if (e.target.closest('a')) { mnav.classList.add('hidden'); burger.setAttribute('aria-expanded', false) } });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape' && !mnav.classList.contains('hidden')) { mnav.classList.add('hidden'); burger.setAttribute('aria-expanded', false); burger.focus() } });
+        $('#annx').onclick = () => $('#ann').remove();
+
+        /* route wiring */
+        document.querySelectorAll('[data-cfg]').forEach(a => {
+            const u = CFG[a.dataset.cfg];
+            if (u) { a.href = u } else { a.href = '#'; a.setAttribute('aria-disabled', 'true'); if (a.dataset.cfg === 'captainLogin') a.style.display = 'none'; a.addEventListener('click', e => e.preventDefault()) }
+        });
+        document.querySelectorAll('a[data-cfg][aria-disabled]').forEach(a => { if (!a.classList.contains('btn')) a.style.opacity = .5 });
+
+        /* APK */
+        const apk = $('#apkbtn');
+        if (CFG.apkUrl) {
+            apk.href = CFG.apkUrl; apk.setAttribute('download', ''); apk.textContent = 'Download Captain APK';
+            try { new QRCode($('#qr'), { text: CFG.apkUrl, width: 104, height: 104 }); $('#qrwrap').classList.remove('hidden'); $('#qrwrap').classList.add('flex') } catch (e) { }
+        } else {
+            apk.href = '#'; apk.setAttribute('aria-disabled', 'true'); apk.textContent = 'APK Coming Soon';
+            apk.addEventListener('click', e => e.preventDefault());
+        }
+
+        /* Mock dashboards (illustrative sample data) */
+        const orders = [['#1042', 'Table 4', 'Preparing', 'warn'], ['#1043', 'Table 7', 'New', 'info'], ['#1044', 'Takeaway', 'Ready', 'ok']];
+        const tables = [['1', 'ok'], ['2', 'warn'], ['3', 'ok'], ['4', 'warn'], ['5', 'ok'], ['6', 'ok'], ['7', 'info'], ['8', 'ok']];
+        const col = k => `color:var(--${k});background:color-mix(in srgb,var(--${k}) 14%,transparent)`;
+        const mock = (big) => `<div class="card p-4 sm:p-5 shadow-xl" style="box-shadow:0 24px 60px -30px rgba(0,0,0,.35)" role="img" aria-label="Illustrative Transserve dashboard preview with sample data">
+ <div class="flex items-center justify-between mb-4"><p class="fh font-bold">Today’s overview</p><span class="pill" style="background:var(--soft);color:var(--mut)">Sample data</span></div>
+ <div class="grid grid-cols-3 gap-2 mb-4">
+  ${[['Orders', '24'], ['Active tables', '5/8'], ['Sales', '₹18,450']].map(([a, b]) => `<div class="rounded-xl p-3" style="background:var(--soft)"><p class="text-[11px] text-mut">${a}</p><p class="fh font-bold text-base sm:text-lg truncate">${b}</p></div>`).join('')}
+ </div>
+ <div class="grid ${big ? 'sm:grid-cols-2' : ''} gap-4">
+  <div><p class="text-xs font-semibold text-mut mb-2">Live orders</p><div class="space-y-2">
+  ${orders.map(o => `<div class="flex items-center justify-between rounded-lg border border-line px-3 py-2 text-sm"><span><b>${o[0]}</b> <span class="text-mut">· ${o[1]}</span></span><span class="pill" style="${col(o[3])}">${o[2]}</span></div>`).join('')}</div></div>
+  <div><p class="text-xs font-semibold text-mut mb-2">Tables</p><div class="grid grid-cols-4 gap-2">
+  ${tables.map(t => `<div class="aspect-square rounded-lg grid place-items-center text-sm font-bold" style="${col(t[1])}">${t[0]}</div>`).join('')}</div>
+  ${big ? `<div class="mt-3 rounded-lg border border-line p-3 text-sm flex justify-between"><span class="text-mut">Bill · Table 4</span><b>₹1,240</b></div>` : ''}</div>
+ </div></div>`;
+
+        /* ============================================================
+           3D RESTAURANT LIFECYCLE SIMULATION (5 STEPS)
+           1. Customer Orders ➔ 2. Captain Takes Order ➔ 3. Kitchen Cooks
+           4. Captain Serves ➔ 5. Customer Pays Bill
+           ============================================================ */
+        const init3DRestaurantSimulation = () => {
+            const container = $('#heromock');
+            if (!container) return;
+
+            const stepsData = [
+                {
+                    title: '1. Customer Order',
+                    hindi: 'Customer table par baith kar QR scan karke order place karta hai',
+                    desc: 'Table 4: Customer scans digital QR menu & selects Paneer Tikka + Butter Naan.',
+                    badge: 'ORDER PLACED',
+                    badgeCol: 'info'
+                },
+                {
+                    title: '2. Captain Order Leta Hai',
+                    hindi: 'Captain apne mobile/tablet app se order confirm karta hai',
+                    desc: 'Captain accepts Table 4 order on Android App & instantly sends ticket to Kitchen KDS.',
+                    badge: 'CAPTAIN ACCEPTED',
+                    badgeCol: 'warn'
+                },
+                {
+                    title: '3. Kitchen Mein Cooking',
+                    hindi: 'Kitchen mein Chef ke KDS par order aata hai aur tazi dish banti hai',
+                    desc: 'Chef fires up the wok with sizzling flame & rising steam. Live prep countdown starts.',
+                    badge: 'CHEF COOKING · 3M',
+                    badgeCol: 'brand'
+                },
+                {
+                    title: '4. Captain Order Lata Hai',
+                    hindi: 'Captain hot dish cloche ke sath lekar table par serve karta hai',
+                    desc: 'Captain picks up prepared dish from counter and serves hot meal directly to Table 4.',
+                    badge: 'FOOD SERVED',
+                    badgeCol: 'ok'
+                },
+                {
+                    title: '5. Bill & Payment',
+                    hindi: 'Customer UPI scan se bill payment karta hai, instant receipt banti hai',
+                    desc: 'Bill generated (₹1,240). Customer scans UPI QR code, payment confirms & table frees up.',
+                    badge: 'PAYMENT SUCCESS · ₹1,240',
+                    badgeCol: 'ok'
+                }
+            ];
+
+            container.innerHTML = `
+            <div class="sim-3d-card p-4 sm:p-5" id="simCard" role="region" aria-label="3D Restaurant Lifecycle Simulation">
+                <!-- Top Status Header -->
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                        <p class="fh font-extrabold text-sm sm:text-base tracking-tight">3D Restaurant Lifecycle</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="pill bg-brand/10 text-brand text-[10px] font-bold">LIVE 3D WORKFLOW</span>
+                        <span class="pill bg-soft text-mut text-[10px] font-medium hidden sm:inline-block">Auto-Playing</span>
+                    </div>
+                </div>
+
+                <!-- 5 Step Tabs Navigation -->
+                <div class="grid grid-cols-5 gap-1.5 mb-3" id="stepTabs">
+                    ${stepsData.map((s, i) => `
+                        <button class="step-tab ${i === 0 ? 'active-step' : ''}" data-step-idx="${i}" aria-label="Step ${i + 1}: ${s.title}">
+                            <span class="truncate text-[11px]">${['Order', 'Captain', 'Cook', 'Serve', 'Pay'][i]}</span>
+                            <div class="step-progress-bar"></div>
+                        </button>
+                    `).join('')}
+                </div>
+
+                <!-- 3D Isometric Simulation Viewport -->
+                <div class="stage-3d-viewport relative flex items-center justify-center">
+                    <!-- Isometric Grid Floor -->
+                    <div class="iso-floor"></div>
+
+                    <!-- 3D Scene SVG Canvas -->
+                    <svg class="w-full h-full relative z-10" viewBox="0 0 600 380" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <filter id="glow3d" x="-20%" y="-20%" width="140%" height="140%">
+                                <feGaussianBlur stdDeviation="3" result="blur" />
+                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                            </filter>
+                            <linearGradient id="beamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                                <stop offset="0%" stop-color="#2f6fd6" stop-opacity="0.9"/>
+                                <stop offset="50%" stop-color="#e4572e" stop-opacity="0.9"/>
+                                <stop offset="100%" stop-color="#1f9d63" stop-opacity="0.9"/>
+                            </linearGradient>
+                            <radialGradient id="tableLight" cx="50%" cy="50%" r="50%">
+                                <stop offset="0%" stop-color="#e4572e" stop-opacity="0.25"/>
+                                <stop offset="100%" stop-color="#e4572e" stop-opacity="0"/>
+                            </radialGradient>
+                        </defs>
+
+                        <!-- Dynamic Connecting Pathway between Stations -->
+                        <path id="simPathKitchenCaptain" d="M 150 180 Q 250 120 300 200" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="2" stroke-dasharray="4 4" />
+                        <path id="simPathCaptainTable" d="M 300 200 Q 380 260 450 240" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="2" stroke-dasharray="4 4" />
+                        <path id="simPathTablePos" d="M 450 240 Q 420 120 310 90" fill="none" stroke="currentColor" stroke-opacity="0.12" stroke-width="2" stroke-dasharray="4 4" />
+
+                        <!-- Active Traveling Energy Beam (Visible in active steps) -->
+                        <path id="activeEnergyBeam" d="M 450 240 Q 380 200 300 200" fill="none" stroke="url(#beamGrad)" stroke-width="3" stroke-linecap="round" class="energy-beam" opacity="0" />
+
+                        <!-- ==============================================
+                             STATION 1 (LEFT): KITCHEN & CHEF STATION
+                             ============================================== -->
+                        <g id="stationKitchen" class="station-box cursor-pointer" transform="translate(40, 110)">
+                            <!-- Kitchen Floor Shadow -->
+                            <ellipse cx="90" cy="140" rx="75" ry="32" fill="#000" fill-opacity="0.08"/>
+
+                            <!-- Kitchen Counter Base (Isometric 3D Box) -->
+                            <path d="M 30 110 L 90 80 L 150 110 L 90 140 Z" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1.5"/>
+                            <path d="M 30 110 L 90 140 L 90 160 L 30 130 Z" fill="#94a3b8"/>
+                            <path d="M 90 140 L 150 110 L 150 130 L 90 160 Z" fill="#64748b"/>
+
+                            <!-- Stove Range Top & Burners -->
+                            <ellipse cx="75" cy="110" rx="14" ry="7" fill="#334155"/>
+                            <ellipse cx="115" cy="100" rx="14" ry="7" fill="#334155"/>
+
+                            <!-- Wok / Skillet on Stove -->
+                            <ellipse cx="75" cy="106" rx="13" ry="6" fill="#1e293b"/>
+                            <!-- Flame under wok (animated in step 3) -->
+                            <g id="kitchenFlame" opacity="0.2">
+                                <path d="M 68 112 Q 75 104 82 112 Q 75 116 68 112 Z" fill="#f59e0b" filter="url(#glow3d)" class="cooking-glow"/>
+                                <path d="M 71 112 Q 75 107 79 112 Z" fill="#ef4444"/>
+                            </g>
+
+                            <!-- Rising Steam from Wok (active in step 3) -->
+                            <g id="kitchenSteam" opacity="0.3">
+                                <path class="steam-wisp" d="M 73 98 C 70 85, 78 75, 74 62" stroke="#e4572e" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+                                <path class="steam-wisp steam-wisp-2" d="M 77 96 C 82 84, 75 73, 79 58" stroke="#e4572e" stroke-width="2.2" stroke-linecap="round" fill="none"/>
+                                <path class="steam-wisp steam-wisp-3" d="M 81 99 C 78 87, 85 76, 82 64" stroke="#d98a0b" stroke-width="2" stroke-linecap="round" fill="none"/>
+                            </g>
+
+                            <!-- KDS Screen on wall -->
+                            <rect x="95" y="32" width="46" height="28" rx="4" fill="#0f172a" stroke="#38bdf8" stroke-width="1.2"/>
+                            <rect x="99" y="36" width="38" height="5" rx="1.5" fill="#38bdf8"/>
+                            <rect x="99" y="44" width="26" height="3" rx="1" fill="#94a3b8"/>
+                            <rect x="99" y="50" width="32" height="3" rx="1" fill="#22c55e"/>
+
+                            <!-- Chef Character Figure -->
+                            <g transform="translate(62, 35)">
+                                <!-- Chef Hat (Toque) -->
+                                <path d="M 8 18 C 5 18 3 15 4 12 C 3 9 5 5 9 5 C 11 3 15 3 17 5 C 21 5 23 9 22 12 C 23 15 21 18 18 18 Z" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2"/>
+                                <rect x="7" y="18" width="12" height="4" fill="#e4572e" rx="1"/>
+                                <!-- Chef Head -->
+                                <circle cx="13" cy="25" r="4.5" fill="#fed7aa"/>
+                                <!-- Chef Coat -->
+                                <path d="M 6 30 L 20 30 L 22 48 L 4 48 Z" fill="#ffffff" stroke="#e2e8f0" stroke-width="1"/>
+                                <!-- Chef Red Scarf -->
+                                <path d="M 9 30 L 17 30 L 15 35 L 11 35 Z" fill="#e4572e"/>
+                                <!-- Chef Hand with Spatula stirring wok -->
+                                <line x1="6" y1="38" x2="-2" y2="52" stroke="#fed7aa" stroke-width="2.5" stroke-linecap="round"/>
+                                <line x1="-2" y1="52" x2="10" y2="68" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+                            </g>
+
+                            <!-- Station Label Tag -->
+                            <g transform="translate(60, 168)">
+                                <rect x="0" y="0" width="68" height="18" rx="9" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+                                <text x="34" y="12.5" font-size="9" font-weight="700" fill="var(--fg)" text-anchor="middle">👨‍🍳 Kitchen</text>
+                            </g>
+                        </g>
+
+                        <!-- ==============================================
+                             STATION 2 (CENTER): CAPTAIN SERVICE
+                             ============================================== -->
+                        <g id="stationCaptain" class="station-box cursor-pointer" transform="translate(260, 130)">
+                            <!-- Captain Floor Shadow -->
+                            <ellipse cx="40" cy="130" rx="36" ry="16" fill="#000" fill-opacity="0.08"/>
+
+                            <!-- Captain Character Figure -->
+                            <g id="captainBody" transform="translate(24, 40)" class="transition-transform duration-500">
+                                <!-- Captain Head & Hair -->
+                                <circle cx="16" cy="18" r="6" fill="#fed7aa"/>
+                                <path d="M 10 16 C 10 11, 22 11, 22 16 Z" fill="#1e293b"/>
+                                <!-- Captain Uniform Waistcoat & Tie -->
+                                <path d="M 8 24 L 24 24 L 26 54 L 6 54 Z" fill="#1e293b"/>
+                                <path d="M 12 24 L 16 32 L 20 24 Z" fill="#ffffff"/>
+                                <!-- Orange Bowtie -->
+                                <polygon points="14,26 18,26 16,28" fill="#e4572e"/>
+                                <!-- Legs/Trousers -->
+                                <rect x="9" y="54" width="5" height="24" fill="#0f172a" rx="2"/>
+                                <rect x="18" y="54" width="5" height="24" fill="#0f172a" rx="2"/>
+
+                                <!-- Hand 1: Holding Android Mobile Tablet -->
+                                <g id="captainTablet" transform="translate(-2, 30)">
+                                    <rect x="0" y="0" width="10" height="15" rx="1.5" fill="#0f172a" stroke="#38bdf8" stroke-width="0.8"/>
+                                    <rect x="1.5" y="2" width="7" height="9" fill="#38bdf8" opacity="0.8"/>
+                                    <!-- Mobile Ping Radiation (Step 2) -->
+                                    <circle cx="5" cy="7" r="7" fill="none" stroke="#38bdf8" stroke-width="1.2" opacity="0" id="tabletPing"/>
+                                </g>
+
+                                <!-- Hand 2: Serving Tray with Cloche Dome (Step 4) -->
+                                <g id="captainTray" transform="translate(20, 26)" opacity="0.4">
+                                    <line x1="-2" y1="12" x2="22" y2="12" stroke="#64748b" stroke-width="2.5" stroke-linecap="round"/>
+                                    <!-- Silver Cloche Dome -->
+                                    <path d="M 1 12 C 1 3, 19 3, 19 12 Z" fill="#e4572e" opacity="0.9"/>
+                                    <circle cx="10" cy="2" r="1.8" fill="#e4572e"/>
+                                    <!-- Gentle Steam from Cloche -->
+                                    <path class="steam-wisp" d="M 10 0 Q 7 -8 10 -15" stroke="#e4572e" stroke-width="1.8" fill="none"/>
+                                </g>
+                            </g>
+
+                            <!-- Station Label Tag -->
+                            <g transform="translate(10, 142)">
+                                <rect x="0" y="0" width="66" height="18" rx="9" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+                                <text x="33" y="12.5" font-size="9" font-weight="700" fill="var(--fg)" text-anchor="middle">📋 Captain</text>
+                            </g>
+                        </g>
+
+                        <!-- ==============================================
+                             STATION 3 (RIGHT): CUSTOMER TABLE 4
+                             ============================================== -->
+                        <g id="stationCustomer" class="station-box cursor-pointer" transform="translate(390, 150)">
+                            <!-- Table Floor Shadow & Ambient Light -->
+                            <ellipse cx="80" cy="120" rx="70" ry="30" fill="url(#tableLight)"/>
+                            <ellipse cx="80" cy="120" rx="60" ry="24" fill="#000" fill-opacity="0.09"/>
+
+                            <!-- Isometric Dining Table -->
+                            <path d="M 30 90 L 80 65 L 130 90 L 80 115 Z" fill="#fed7aa" stroke="#fdba74" stroke-width="1.5"/>
+                            <path d="M 30 90 L 80 115 L 80 135 L 30 110 Z" fill="#ea580c"/>
+                            <path d="M 80 115 L 130 90 L 130 110 L 80 135 Z" fill="#c2410c"/>
+                            <!-- Table Center Pedestal -->
+                            <rect x="76" y="115" width="8" height="24" fill="#7c2d12"/>
+
+                            <!-- Digital QR Stand on Table -->
+                            <rect x="76" y="80" width="8" height="12" rx="1" fill="#ffffff" stroke="#e4572e" stroke-width="0.8"/>
+                            <rect x="78" y="82" width="4" height="4" fill="#17181c"/>
+                            <!-- Table 4 Tag -->
+                            <ellipse cx="80" cy="74" rx="10" ry="5" fill="#e4572e"/>
+                            <text x="80" y="76.5" font-size="5" font-weight="bold" fill="#ffffff" text-anchor="middle">T-4</text>
+
+                            <!-- Served Hot Plate (Active in Step 4 & 5) -->
+                            <g id="tableDishes" opacity="0">
+                                <ellipse cx="98" cy="94" rx="12" ry="6" fill="#ffffff" stroke="#e2e8f0"/>
+                                <ellipse cx="98" cy="93" rx="8" ry="4" fill="#e4572e"/>
+                                <circle cx="98" cy="93" r="2" fill="#facc15"/>
+                                <!-- Gentle steam from food -->
+                                <path class="steam-wisp" d="M 98 88 Q 95 80 98 72" stroke="#e4572e" stroke-width="1.5" fill="none"/>
+                            </g>
+
+                            <!-- Customer Chair & Character Figure -->
+                            <g transform="translate(10, 48)">
+                                <!-- Chair Back -->
+                                <path d="M 2 40 L 18 40 L 18 70 L 2 70 Z" fill="#d97706" rx="2"/>
+                                <!-- Customer Head & Hair -->
+                                <circle cx="10" cy="22" r="5.5" fill="#fed7aa"/>
+                                <path d="M 4 20 C 4 15, 16 15, 16 20 Z" fill="#475569"/>
+                                <!-- Customer Body / Shirt -->
+                                <path d="M 4 28 L 16 28 L 18 52 L 2 52 Z" fill="#3b82f6"/>
+
+                                <!-- Customer Hand holding Phone with QR scan ray (Step 1) -->
+                                <g id="customerPhone" transform="translate(14, 28)">
+                                    <rect x="2" y="2" width="6" height="11" rx="1" fill="#0f172a" stroke="#38bdf8" stroke-width="0.7"/>
+                                    <rect x="3" y="3" width="4" height="7" fill="#38bdf8"/>
+                                    <!-- QR Beam from phone to table QR (Step 1) -->
+                                    <polygon id="qrScanBeam" points="8,7 55,42 55,48" fill="#38bdf8" opacity="0.4" class="animate-pulse"/>
+                                </g>
+
+                                <!-- Customer Happy Emoji / Speech Bubble -->
+                                <g id="customerBubble" transform="translate(-10, -5)" opacity="0" class="transition-opacity">
+                                    <rect x="0" y="0" width="38" height="18" rx="5" fill="#ffffff" stroke="#22c55e" stroke-width="1"/>
+                                    <text x="19" y="12" font-size="8" font-weight="bold" fill="#15803d" text-anchor="middle">Yum! 😋</text>
+                                </g>
+                            </g>
+
+                            <!-- Station Label Tag -->
+                            <g transform="translate(46, 142)">
+                                <rect x="0" y="0" width="70" height="18" rx="9" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+                                <text x="35" y="12.5" font-size="9" font-weight="700" fill="var(--fg)" text-anchor="middle">🛋️ Table 4</text>
+                            </g>
+                        </g>
+
+                        <!-- ==============================================
+                             STATION 4 (TOP-RIGHT): POS & BILLING COUNTER
+                             ============================================== -->
+                        <g id="stationPOS" class="station-box cursor-pointer" transform="translate(260, 20)">
+                            <!-- Counter Base -->
+                            <path d="M 30 50 L 70 32 L 110 50 L 70 68 Z" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="1.2"/>
+                            <path d="M 30 50 L 70 68 L 70 82 L 30 64 Z" fill="#94a3b8"/>
+                            <path d="M 70 68 L 110 50 L 110 64 L 70 82 Z" fill="#64748b"/>
+
+                            <!-- Touchscreen POS Terminal -->
+                            <rect x="58" y="24" width="24" height="18" rx="2" fill="#0f172a" stroke="#22c55e" stroke-width="1"/>
+                            <rect x="61" y="27" width="18" height="12" fill="#22c55e" opacity="0.2"/>
+                            <line x1="70" y1="42" x2="70" y2="47" stroke="#64748b" stroke-width="2"/>
+
+                            <!-- QR Payment Stand -->
+                            <rect x="88" y="36" width="10" height="14" rx="1.5" fill="#ffffff" stroke="#e4572e" stroke-width="0.8"/>
+                            <rect x="90" y="38" width="6" height="6" fill="#1e293b"/>
+
+                            <!-- Receipt Bill Roll (Step 5) -->
+                            <g id="posReceipt" transform="translate(42, 38)" opacity="0">
+                                <rect x="0" y="0" width="14" height="20" rx="1" fill="#ffffff" stroke="#94a3b8" stroke-width="0.6"/>
+                                <line x1="2" y1="4" x2="12" y2="4" stroke="#e4572e" stroke-width="1.2"/>
+                                <line x1="2" y1="8" x2="10" y2="8" stroke="#64748b" stroke-width="0.8"/>
+                                <line x1="2" y1="12" x2="11" y2="12" stroke="#64748b" stroke-width="0.8"/>
+                                <line x1="2" y1="16" x2="8" y2="16" stroke="#22c55e" stroke-width="1"/>
+                            </g>
+
+                            <!-- Station Label Tag -->
+                            <g transform="translate(38, 86)">
+                                <rect x="0" y="0" width="66" height="16" rx="8" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+                                <text x="33" y="11.5" font-size="8.5" font-weight="700" fill="var(--fg)" text-anchor="middle">💳 POS & Bill</text>
+                            </g>
+                        </g>
+
+                        <!-- FLOATING 3D ACTION BADGE OVER SCENE -->
+                        <g id="floatingActionBadge" transform="translate(200, 290)">
+                            <rect x="0" y="0" width="200" height="34" rx="17" fill="var(--card)" stroke="var(--line)" stroke-width="1.5" filter="url(#glow3d)"/>
+                            <circle cx="18" cy="17" r="7" fill="#3b82f6" id="actionBadgeDot"/>
+                            <text x="34" y="18" font-size="10" font-weight="bold" fill="var(--fg)" id="actionBadgeTitle">Step 1: Customer Order</text>
+                            <text x="34" y="27" font-size="8" fill="var(--mut)" id="actionBadgeSub">Table 4 · Scanning QR Menu...</text>
+                        </g>
+
+                        <!-- STEP 5 PAYMENT CELEBRATION BURST OVERLAY -->
+                        <g id="paymentCelebration" opacity="0" transform="translate(300, 180)">
+                            <circle cx="0" cy="0" r="42" fill="none" stroke="#22c55e" stroke-width="3" stroke-dasharray="6 4" class="animate-spin"/>
+                            <circle cx="0" cy="0" r="30" fill="#22c55e" fill-opacity="0.15"/>
+                            <path d="M -10 0 L -3 8 L 12 -7" stroke="#22c55e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+                            <text x="0" y="22" font-size="10" font-weight="800" fill="#15803d" text-anchor="middle">₹1,240 PAID!</text>
+                        </g>
+                    </svg>
+                </div>
+
+                <!-- Live Dynamic Explanation Card -->
+                <div class="mt-3 p-3 rounded-xl border border-line bg-soft/60 flex items-start justify-between gap-3" id="stepExplainer">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="pill" id="expBadge" style="background:#2f6fd6;color:#fff">STEP 1</span>
+                            <p class="font-bold text-xs sm:text-sm text-fg" id="expTitle">1. Customer Order Karta Hai</p>
+                        </div>
+                        <p class="text-xs text-mut" id="expHindi">Customer table par baith kar QR scan karke order place karta hai.</p>
+                        <p class="text-[11px] text-mut/80 mt-0.5" id="expDesc">Table 4: Customer scans digital QR menu & selects Paneer Tikka + Butter Naan.</p>
+                    </div>
+                    <div class="shrink-0 text-right">
+                        <span class="text-[11px] font-bold text-brand block">Table 4</span>
+                        <span class="text-[10px] text-mut">Order #1042</span>
+                    </div>
+                </div>
+            </div>
+            `;
+
+            // State and animations controller
+            let currentStep = 0;
+            let autoInterval = null;
+            let isHovered = false;
+
+            const updateScene = (stepIdx) => {
+                currentStep = stepIdx;
+
+                // Update tabs
+                document.querySelectorAll('#stepTabs .step-tab').forEach((tab, idx) => {
+                    tab.classList.toggle('active-step', idx === stepIdx);
+                });
+
+                // Nodes
+                const stKitchen = $('#stationKitchen');
+                const stCaptain = $('#stationCaptain');
+                const stCustomer = $('#stationCustomer');
+                const stPOS = $('#stationPOS');
+
+                const flame = $('#kitchenFlame');
+                const steam = $('#kitchenSteam');
+                const tabletPing = $('#tabletPing');
+                const captainTray = $('#captainTray');
+                const captainBody = $('#captainBody');
+                const qrBeam = $('#qrScanBeam');
+                const customerBubble = $('#customerBubble');
+                const tableDishes = $('#tableDishes');
+                const posReceipt = $('#posReceipt');
+                const activeBeam = $('#activeEnergyBeam');
+                const paymentCelebration = $('#paymentCelebration');
+
+                const badgeDot = $('#actionBadgeDot');
+                const badgeTitle = $('#actionBadgeTitle');
+                const badgeSub = $('#actionBadgeSub');
+
+                const expBadge = $('#expBadge');
+                const expTitle = $('#expTitle');
+                const expHindi = $('#expHindi');
+                const expDesc = $('#expDesc');
+
+                // Reset general states
+                stKitchen.classList.remove('station-active');
+                stCaptain.classList.remove('station-active');
+                stCustomer.classList.remove('station-active');
+                stPOS.classList.remove('station-active');
+
+                flame && flame.setAttribute('opacity', '0.2');
+                steam && steam.setAttribute('opacity', '0.2');
+                tabletPing && tabletPing.setAttribute('opacity', '0');
+                captainTray && captainTray.setAttribute('opacity', '0.2');
+                captainBody && captainBody.setAttribute('transform', 'translate(24, 40)');
+                qrBeam && qrBeam.setAttribute('opacity', '0');
+                customerBubble && customerBubble.setAttribute('opacity', '0');
+                tableDishes && tableDishes.setAttribute('opacity', '0');
+                posReceipt && posReceipt.setAttribute('opacity', '0');
+                activeBeam && activeBeam.setAttribute('opacity', '0');
+                paymentCelebration && paymentCelebration.setAttribute('opacity', '0');
+
+                // Step-specific orchestrations
+                switch (stepIdx) {
+                    case 0: // Step 1: Customer Order
+                        stCustomer.classList.add('station-active');
+                        qrBeam.setAttribute('opacity', '0.5');
+                        badgeDot.setAttribute('fill', '#2f6fd6');
+                        badgeTitle.textContent = 'Step 1: Customer Order';
+                        badgeSub.textContent = 'Table 4 · Scanning QR Menu & Ordering...';
+                        expBadge.style.background = '#2f6fd6';
+                        expBadge.textContent = 'STEP 1: ORDER';
+                        break;
+
+                    case 1: // Step 2: Captain Takes Order
+                        stCaptain.classList.add('station-active');
+                        tabletPing.setAttribute('opacity', '1');
+                        activeBeam.setAttribute('opacity', '1');
+                        activeBeam.setAttribute('d', 'M 450 240 Q 380 200 300 200');
+                        badgeDot.setAttribute('fill', '#d98a0b');
+                        badgeTitle.textContent = 'Step 2: Captain Takes Order';
+                        badgeSub.textContent = 'Android App · Ticket Sent to Kitchen KDS';
+                        expBadge.style.background = '#d98a0b';
+                        expBadge.textContent = 'STEP 2: CAPTAIN';
+                        break;
+
+                    case 2: // Step 3: Kitchen Cooking
+                        stKitchen.classList.add('station-active');
+                        flame.setAttribute('opacity', '1');
+                        steam.setAttribute('opacity', '1');
+                        activeBeam.setAttribute('opacity', '1');
+                        activeBeam.setAttribute('d', 'M 300 200 Q 230 140 150 180');
+                        badgeDot.setAttribute('fill', '#e4572e');
+                        badgeTitle.textContent = 'Step 3: Kitchen Cooking';
+                        badgeSub.textContent = 'Chef at Work · Paneer Tikka (3m remaining)';
+                        expBadge.style.background = '#e4572e';
+                        expBadge.textContent = 'STEP 3: KITCHEN';
+                        break;
+
+                    case 3: // Step 4: Captain Serves Food
+                        stCaptain.classList.add('station-active');
+                        stCustomer.classList.add('station-active');
+                        captainTray.setAttribute('opacity', '1');
+                        captainBody.setAttribute('transform', 'translate(54, 40) scale(1.05)'); // Captain walks closer to table
+                        tableDishes.setAttribute('opacity', '1');
+                        customerBubble.setAttribute('opacity', '1');
+                        badgeDot.setAttribute('fill', '#1f9d63');
+                        badgeTitle.textContent = 'Step 4: Captain Serves Food';
+                        badgeSub.textContent = 'Table 4 · Fresh Hot Meal Served with Cloche';
+                        expBadge.style.background = '#1f9d63';
+                        expBadge.textContent = 'STEP 4: SERVED';
+                        break;
+
+                    case 4: // Step 5: Bill & UPI Payment
+                        stPOS.classList.add('station-active');
+                        stCustomer.classList.add('station-active');
+                        tableDishes.setAttribute('opacity', '0.6');
+                        posReceipt.setAttribute('opacity', '1');
+                        paymentCelebration.setAttribute('opacity', '1');
+                        badgeDot.setAttribute('fill', '#1f9d63');
+                        badgeTitle.textContent = 'Step 5: Bill Payment Done';
+                        badgeSub.textContent = 'Instant UPI Paid · ₹1,240 Received Successfully';
+                        expBadge.style.background = '#1f9d63';
+                        expBadge.textContent = 'STEP 5: PAID';
+                        break;
+                }
+
+                // Update text explainer
+                expTitle.textContent = stepsData[stepIdx].title;
+                expHindi.textContent = stepsData[stepIdx].hindi;
+                expDesc.textContent = stepsData[stepIdx].desc;
+            };
+
+            // Click listener on tabs
+            $('#stepTabs').addEventListener('click', (e) => {
+                const tab = e.target.closest('.step-tab');
+                if (!tab) return;
+                const idx = parseInt(tab.dataset.stepIdx, 10);
+                updateScene(idx);
+                restartTimer();
+            });
+
+            // Auto-advance loop
+            const nextStep = () => {
+                if (isHovered) return;
+                const next = (currentStep + 1) % stepsData.length;
+                updateScene(next);
+            };
+
+            const restartTimer = () => {
+                if (autoInterval) clearInterval(autoInterval);
+                autoInterval = setInterval(nextStep, 3500);
+            };
+
+            // Pause on hover
+            const simCard = $('#simCard');
+            if (simCard) {
+                simCard.addEventListener('mouseenter', () => { isHovered = true; });
+                simCard.addEventListener('mouseleave', () => { isHovered = false; });
+            }
+
+            // Initial trigger
+            updateScene(0);
+            restartTimer();
+        };
+        init3DRestaurantSimulation();
+        $('#ownmock').innerHTML = mock(true);
+        $('#ownerlist').innerHTML = ['Live orders', 'Table monitoring', 'Billing and payments', 'Menu management', 'Sales overview'].map(t => `<li class="flex gap-2 items-center"><span class="text-brand">${ic('check', 18)}</span>${t}</li>`).join('');
+
+        const F = [['list', 'Live Order Management', 'Track new, preparing and ready orders as they move through your restaurant.'],
+        ['bill', 'Billing and POS', 'Generate bills quickly and keep billing organized for dine-in and takeaway.'],
+        ['grid', 'Table Management', 'See which tables are occupied or free at a glance.'],
+        ['menu', 'Menu and Product Management', 'Update items, categories and prices from one place.'],
+        ['user', 'Captain Workflow', 'Let service staff handle assigned orders from their Android device.'],
+        ['pay', 'Payment Tracking', 'Record and review payments against each bill.'],
+        ['tag', 'Offers and Discounts', 'Set up offers and apply discounts at billing time.'],
+        ['chart', 'Sales Analytics', 'Review available sales information to understand your business.'],
+        ['gear', 'Settings and Staff', 'Configure your restaurant and manage staff access.']];
+        $('#fgrid').innerHTML = F.map(([i, t, d]) => `<article class="card p-5 rv hover:-translate-y-1 hover:shadow-lg transition"><div class="w-10 h-10 rounded-xl grid place-items-center mb-4 text-brand" style="background:color-mix(in srgb,var(--brand) 12%,transparent)">${ic(i)}</div><h3 class="font-bold">${t}</h3><p class="mt-1.5 text-sm text-mut">${d}</p></article>`).join('');
+
+        const S = [['Set up your restaurant and menu', 'Add your restaurant details, categories and menu items.'], ['Manage orders, tables and billing', 'Run daily operations from the restaurant dashboard.'], ['Coordinate service staff', 'Use the Captain app to keep table service in sync.']];
+        $('#steps').innerHTML = S.map(([t, d], i) => `<div class="card p-6 rv"><div class="w-9 h-9 rounded-full bg-brand text-white grid place-items-center fh font-bold mb-4">${i + 1}</div><h3 class="font-bold text-lg">${t}</h3><p class="mt-2 text-mut text-sm">${d}</p></div>`).join('');
+
+        const W = [['New Order', 'Order is placed'], ['Preparation', 'Track order status'], ['Captain Service', 'Staff serves the table'], ['Bill Generation', 'Bill is created'], ['Payment', 'Payment is recorded']];
+        $('#flow').innerHTML = W.map(([t, d], i) => `<li class="card p-4 rv"><span class="pill" style="background:var(--soft);color:var(--mut)">Step ${i + 1}</span><p class="fh font-bold mt-2">${t}</p><p class="text-sm text-mut">${d}</p></li>`).join('');
+
+        const B = ['Keep orders organized', 'Simplify restaurant billing', 'Improve coordination between staff', 'Monitor table activity', 'Manage menus from one place', 'Review available sales information'];
+        $('#ben').innerHTML = B.map(t => `<div class="card p-5 flex gap-3 items-center rv"><span class="text-brand shrink-0">${ic('check')}</span><p class="font-semibold">${t}</p></div>`).join('');
+
+        const Q = [['What is Transserve?', 'Transserve is a restaurant management platform for handling orders, tables, billing and menu management from one place.'],
+        ['Which types of restaurants can use Transserve?', 'It is designed for restaurants, cafés and other small and medium-sized food businesses.'],
+        ['How can a restaurant owner get started?', 'Use the “Get Started” button to register, then set up your restaurant and menu from the dashboard.'],
+        ['What is the Captain app used for?', 'Captains and service staff use it on Android to handle assigned orders and table service.'],
+        ['How can I download the Captain APK?', 'Use the “Download Captain APK” button in the Captain section when it is available, then follow your device’s installation prompts.'],
+        ['Can I use Transserve from a mobile device?', 'The owner dashboard is a web app and the layout adapts to mobile screens. The Captain app is for Android.'],
+        ['How can I contact the Transserve team?', 'Use the contact link in the footer once contact details are published.']];
+        $('#faqlist').innerHTML = Q.map(([q, a], i) => `<div class="card faq">
+<h3><button class="w-full flex justify-between items-center gap-4 text-left p-4 font-semibold min-h-[52px]" aria-expanded="false" aria-controls="fa${i}" id="fq${i}">${q}<span class="chev shrink-0">${ic('chev', 20)}</span></button></h3>
+<div class="faq-a" id="fa${i}" role="region" aria-labelledby="fq${i}"><div><p class="px-4 pb-4 text-mut text-sm">${a}</p></div></div></div>`).join('');
+        $('#faqlist').addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; const c = b.closest('.faq'), o = c.classList.toggle('faq-open'); b.setAttribute('aria-expanded', o) });
+
+        /* footer links: only real ones */
+        const fl = [];
+        if (CFG.contactEmail) fl.push(`<li><a href="mailto:${CFG.contactEmail}">Contact Us</a></li>`);
+        if (CFG.privacyUrl) fl.push(`<li><a href="${CFG.privacyUrl}">Privacy Policy</a></li>`);
+        if (CFG.termsUrl) fl.push(`<li><a href="${CFG.termsUrl}">Terms and Conditions</a></li>`);
+        $('#flinks').innerHTML = fl.join('') || '<li>Contact details coming soon.</li>';
+        $('#yr').textContent = new Date().getFullYear();
+
+        /* reveal */
+        const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target) } }), { threshold: .12 });
+        document.querySelectorAll('.rv').forEach(el => io.observe(el));
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const q = s => document.querySelector(s);
+            const n = (c, f) => Array.from({ length: c }, (_, i) => f(i)).join('');
+            const mk = (host, html, cls = '') => { if (!host) return; const d = document.createElement('div'); d.className = 'sb ' + cls; d.setAttribute('aria-hidden', 'true'); d.innerHTML = html; host.prepend(d); };
+            const dots = '<i class="sb-dots"></i>';
+            const svg = p => `<svg class="sb-svg" viewBox="0 0 1200 500" preserveAspectRatio="none">${p}</svg>`;
+            const pt = (l, t) => `<i class="sb-pt" style="left:${l}%;top:${t}%"></i>`;
+
+            mk(q('#features'), dots + '<i class="sb-rail"></i>' + n(8, i => `<i class="sb-tk${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 19, 31, 44, 57, 69, 81, 92][i]}%;animation-duration:${5 + i % 3}s;animation-delay:-${i * .9}s"></i>`));
+            mk(q('#how'), dots + svg('<path class="sb-path" d="M0 330C200 250 300 410 500 330S800 250 1000 330S1150 380 1200 340"/><path class="sb-path sb-slow" d="M0 380C250 330 350 440 600 380S900 320 1200 390"/>') + pt(17, 64) + pt(50, 66) + pt(83, 64));
+            const H = [40, 62, 48, 75, 58, 88, 66, 52, 80, 94, 70, 56, 84, 60, 72, 90, 64, 50, 78, 68];
+            mk(q('#product'), '<div class="sb-bars">' + n(20, i => `<i style="--h:${H[i]}%;--d:-${(i * .7).toFixed(1)}s"></i>`) + '</div>');
+            mk(q('#captain'), dots + svg('<path class="sb-path" d="M120 150C300 80 450 260 650 200S900 80 1080 130"/><path class="sb-path sb-slow" d="M200 420C400 330 600 460 800 380S1000 330 1100 400"/>') + pt(10, 30) + pt(54, 40) + pt(90, 26) + pt(17, 84) + pt(67, 76));
+            mk(q('#flow') && q('#flow').closest('section'), '<i class="sb-belt"></i>' + n(4, i => `<i class="sb-pl${i % 2 ? ' sb-hm' : ''}" style="animation-delay:-${i * 6}s"></i>`));
+            mk(q('#ben') && q('#ben').closest('section'), n(8, i => `<i class="sb-ck${i % 2 ? ' sb-hm' : ''}" style="left:${[6, 17, 28, 41, 55, 67, 79, 91][i]}%;animation-duration:${13 + i % 4 * 2}s;animation-delay:-${i * 2.3}s"></i>`));
+            mk(q('#faq'), n(6, i => `<i class="sb-qb" style="left:${[4, 11, 18, 86, 92, 80][i]}%;top:${[14, 62, 34, 20, 66, 48][i]}%;animation-delay:-${i * 1.4}s"></i>`));
+            const cta = q('main > section:last-of-type > .rounded-3xl');
+            if (cta) { cta.classList.add('sb-wrap'); mk(cta, '<i class="sb-glow"></i>' + n(8, i => `<i class="sb-em${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 20, 32, 45, 58, 70, 82, 93][i]}%;animation-delay:-${i * 1.1}s;animation-duration:${8 + i % 3}s"></i>`), 'sb-card'); }
+
+            const layers = [...document.querySelectorAll('.sb')];
+            if (!('IntersectionObserver' in window)) { layers.forEach(l => l.classList.add('on')); return; }
+            const vis = new WeakMap();
+            const upd = l => l.classList.toggle('on', !!vis.get(l) && !document.hidden);
+            const io = new IntersectionObserver(es => es.forEach(e => { vis.set(e.target, e.isIntersecting); upd(e.target); }), { rootMargin: '80px' });
+            layers.forEach(l => io.observe(l));
+            document.addEventListener('visibilitychange', () => layers.forEach(upd));
+        });
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const q = s => document.querySelector(s);
+            const n = (c, f) => Array.from({ length: c }, (_, i) => f(i)).join('');
+            const mk = (host, html, cls = '') => { if (!host) return; const d = document.createElement('div'); d.className = 'sb ' + cls; d.setAttribute('aria-hidden', 'true'); d.innerHTML = html; host.prepend(d); };
+            const dots = '<i class="sb-dots"></i>';
+            const orb = (x, y, c = '') => `<i class="sb-orb" style="left:${x};top:${y};${c ? '--c:' + c : ''}"></i>`;
+            const svg = p => `<svg class="sb-svg" viewBox="0 0 1200 500" preserveAspectRatio="none">${p}</svg>`;
+            const pt = (l, t) => `<i class="sb-pt" style="left:${l}%;top:${t}%"></i>`;
+            const dot = (p, d) => `<circle class="sb-dot sb-hm" r="5"><animateMotion dur="${d}s" repeatCount="indefinite" path="${p}"/></circle>`;
+            const chip = (t, l, top, d) => `<i class="sb-chip" style="left:${l}%;top:${top}%;animation-delay:-${d}s">${t}</i>`;
+
+            const HOW = 'M0 330C200 250 300 410 500 330S800 250 1000 330S1150 380 1200 340';
+            const CAP = 'M120 150C300 80 450 260 650 200S900 80 1080 130';
+            const LINE = 'M0 400C120 380 200 420 300 350S480 320 560 270S740 290 820 210S1020 140 1200 100';
+
+            mk(q('#features'), dots + orb('-120px', '-160px') + '<i class="sb-rail"></i>' + n(8, i => `<i class="sb-tk${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 19, 31, 44, 57, 69, 81, 92][i]}%;--d:${(i * .12).toFixed(2)}s;--s:${5 + i % 3}s"></i>`));
+            mk(q('#how'), dots + svg(`<path class="sb-path" d="${HOW}"/><path class="sb-path sb-slow" d="M0 380C250 330 350 440 600 380S900 320 1200 390"/>${dot(HOW, 8)}`) + pt(17, 64) + pt(50, 66) + pt(83, 64));
+            const H = [40, 62, 48, 75, 58, 88, 66, 52, 80, 94, 70, 56, 84, 60, 72, 90, 64, 50, 78, 68];
+            mk(q('#product'), orb('55%', '-120px') + svg(`<defs><linearGradient id="sbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" style="stop-color:var(--brand)" stop-opacity=".22"/><stop offset="1" style="stop-color:var(--brand)" stop-opacity="0"/></linearGradient></defs><path class="sb-area" d="${LINE}L1200 500L0 500Z" fill="url(#sbg)"/><path class="sb-line" pathLength="1" d="${LINE}"/><circle class="sb-dot sb-hm" r="6"><animateMotion dur="9s" repeatCount="indefinite" path="${LINE}" keyPoints="0;1;1" keyTimes="0;.55;1" calcMode="linear"/><animate attributeName="opacity" values="0;1;1;0" keyTimes="0;.05;.92;1" dur="9s" repeatCount="indefinite"/></circle>`) + '<div class="sb-bars">' + n(20, i => `<i style="--h:${H[i]}%;--d:-${(i * .7).toFixed(1)}s"></i>`) + '</div>' + chip('+ ₹450 paid', 3, 60, 0) + chip('Order #1051', 8, 70, 3) + chip('Table 6 free', 2, 75, 6));
+            mk(q('#captain'), dots + svg(`<path class="sb-path" d="${CAP}"/><path class="sb-path sb-slow" d="M200 420C400 330 600 460 800 380S1000 330 1100 400"/>${dot(CAP, 7)}`) + pt(10, 30) + pt(54, 40) + pt(90, 26) + pt(17, 84) + pt(67, 76) + chip('New order · Table 4', 78, 70, 1) + chip('Ready to serve', 84, 78, 5));
+            mk(q('#flow') && q('#flow').closest('section'), '<i class="sb-belt"></i>' + n(4, i => `<i class="sb-pl${i % 2 ? ' sb-hm' : ''}" style="animation-delay:-${i * 6}s,-${i}s"></i>`));
+            mk(q('#ben') && q('#ben').closest('section'), orb('60%', '45%', 'var(--ok)') + n(8, i => `<i class="sb-ck${i % 2 ? ' sb-hm' : ''}" style="left:${[6, 17, 28, 41, 55, 67, 79, 91][i]}%;animation-duration:${13 + i % 4 * 2}s;animation-delay:-${i * 2.3}s"></i>`));
+            mk(q('#faq'), n(6, i => `<i class="sb-qb" style="left:${[4, 11, 18, 86, 92, 80][i]}%;top:${[14, 62, 34, 20, 66, 48][i]}%;animation-delay:-${i * 1.4}s"></i>`) + '<i class="sb-ty" style="left:6%;top:82%"><b></b><b></b><b></b></i><i class="sb-ty" style="left:88%;top:8%"><b></b><b></b><b></b></i>');
+            const cta = q('main > section:last-of-type > .rounded-3xl');
+            if (cta) { cta.classList.add('sb-wrap'); mk(cta, '<i class="sb-glow"></i><i class="sb-sheen"></i>' + n(8, i => `<i class="sb-em${i % 2 ? ' sb-hm' : ''}" style="left:${[8, 20, 32, 45, 58, 70, 82, 93][i]}%;animation-delay:-${i * 1.1}s;animation-duration:${8 + i % 3}s"></i>`), 'sb-card'); }
+
+            [['#fgrid', 70], ['#steps', 120], ['#flow', 80], ['#ben', 70]].forEach(([s, d]) => {
+                const h = q(s); if (!h) return;
+                [...h.children].forEach((el, i) => { el.style.transitionDelay = i * d + 'ms'; el.addEventListener('transitionend', () => { el.style.transitionDelay = ''; }, { once: true }); });
+            });
+
+            const layers = [...document.querySelectorAll('.sb')];
+            if (!('IntersectionObserver' in window)) { layers.forEach(l => l.classList.add('on')); return; }
+            const vis = new WeakMap();
+            const upd = l => {
+                const on = !!vis.get(l) && !document.hidden;
+                l.classList.toggle('on', on);
+                l.querySelectorAll('svg').forEach(s => { try { on ? s.unpauseAnimations() : s.pauseAnimations(); } catch (e) { } });
+            };
+            const io = new IntersectionObserver(es => es.forEach(e => { vis.set(e.target, e.isIntersecting); upd(e.target); }), { rootMargin: '80px' });
+            layers.forEach(l => io.observe(l));
+            document.addEventListener('visibilitychange', () => layers.forEach(upd));
+        });
+    </script>
+</body>
+
+</html>
