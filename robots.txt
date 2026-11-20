@@ -1,0 +1,5 @@
+# Transserve — https://transserve.in
+User-agent: *
+Allow: /
+
+Sitemap: https://transserve.in/sitemap.xml

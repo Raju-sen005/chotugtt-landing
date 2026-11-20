@@ -1,18 +1,23 @@
 /**
  * Transserve landing — interactions (no frameworks)
+ * CFG values prefer window.TRANSERVE_CONFIG when present.
  */
 (function () {
   "use strict";
 
+  const SITE = window.TRANSERVE_CONFIG || {};
   const CFG = {
-    login: "https://chotu-frontend-ngph.onrender.com/",
-    register: "https://chotu-frontend-ngph.onrender.com/subscription-checkout",
-    captainLogin: "",
+    login: SITE.loginUrl || "https://chotu-frontend-ngph.onrender.com/",
+    register:
+      SITE.registerUrl ||
+      "https://chotu-frontend-ngph.onrender.com/subscription-checkout",
+    captainLogin: SITE.captainLoginUrl || "",
     apkUrl:
+      SITE.apkUrl ||
       "https://expo.dev/accounts/raju005/projects/captain-app/builds/25829aac-479a-465b-8443-23094ae79b02",
-    contactEmail: "support@transserve.in",
-    privacyUrl: "",
-    termsUrl: "",
+    contactEmail: SITE.contactEmail || "support@transserve.in",
+    privacyUrl: SITE.privacyUrl || "",
+    termsUrl: SITE.termsUrl || "",
   };
 
   const $ = (s, root = document) => root.querySelector(s);
@@ -20,7 +25,6 @@
 
   document.documentElement.setAttribute("data-theme", "light");
 
-  /* Sticky header */
   const header = $(".site-header");
   const onScroll = () => {
     if (!header) return;
@@ -29,11 +33,9 @@
   onScroll();
   window.addEventListener("scroll", onScroll, { passive: true });
 
-  /* Announcement */
   const annx = $("#annx");
   if (annx) annx.addEventListener("click", () => $("#ann")?.remove());
 
-  /* Mobile nav */
   const burger = $("#burger");
   const mnav = $("#mnav");
   const setMenu = (open) => {
@@ -55,21 +57,24 @@
     });
   }
 
-  /* CFG links */
+  /* Only wire CFG if seo.js did not already set a real href */
   $$("[data-cfg]").forEach((a) => {
     const key = a.dataset.cfg;
+    if (key === "whatsapp" || key === "demo") return;
     const url = CFG[key];
+    if (a.getAttribute("href") && a.getAttribute("href") !== "#" && a.getAttribute("href").startsWith("http")) {
+      return;
+    }
     if (url) {
       a.href = url;
-    } else {
+    } else if (key === "captainLogin") {
       a.href = "#";
       a.setAttribute("aria-disabled", "true");
+      a.style.display = "none";
       a.addEventListener("click", (e) => e.preventDefault());
-      if (key === "captainLogin") a.style.display = "none";
     }
   });
 
-  /* Captain APK + QR */
   const apk = $("#apkbtn");
   const qrWrap = $("#qrwrap");
   const qrEl = $("#qr");
@@ -77,8 +82,12 @@
     if (CFG.apkUrl) {
       apk.href = CFG.apkUrl;
       apk.setAttribute("download", "");
-      apk.textContent = "Download Captain APK";
-      if (qrWrap && qrEl && typeof QRCode !== "undefined") {
+      if (!apk.textContent.trim() || apk.textContent.includes("Coming")) {
+        apk.textContent = document.documentElement.lang?.startsWith("hi")
+          ? "कैप्टन APK डाउनलोड"
+          : "Download Captain APK";
+      }
+      if (qrWrap && qrEl && typeof QRCode !== "undefined" && !qrEl.childElementCount) {
         try {
           new QRCode(qrEl, { text: CFG.apkUrl, width: 104, height: 104 });
           qrWrap.classList.add("is-visible");
@@ -92,26 +101,26 @@
     }
   }
 
-  /* Footer company links */
   const flinks = $("#flinks");
-  if (flinks) {
+  if (flinks && !flinks.dataset.static && !flinks.children.length) {
+    const isHi = document.documentElement.lang?.startsWith("hi");
     const items = [];
     if (CFG.contactEmail) {
-      items.push(`<li><a href="mailto:${CFG.contactEmail}">Contact Us</a></li>`);
+      items.push(
+        `<li><a href="mailto:${CFG.contactEmail}">${isHi ? "संपर्क करें" : "Contact Us"}</a></li>`,
+      );
     }
-    if (CFG.privacyUrl) {
-      items.push(`<li><a href="${CFG.privacyUrl}">Privacy Policy</a></li>`);
-    }
-    if (CFG.termsUrl) {
-      items.push(`<li><a href="${CFG.termsUrl}">Terms and Conditions</a></li>`);
-    }
+    items.push(
+      `<li><a href="${isHi ? "/hi/demo/" : "/demo/"}">${isHi ? "डेमो अनुरोध" : "Request a Demo"}</a></li>`,
+    );
+    if (CFG.privacyUrl) items.push(`<li><a href="${CFG.privacyUrl}">Privacy Policy</a></li>`);
+    if (CFG.termsUrl) items.push(`<li><a href="${CFG.termsUrl}">Terms and Conditions</a></li>`);
     flinks.innerHTML = items.join("") || "<li>Contact details coming soon.</li>";
   }
 
   const yr = $("#yr");
   if (yr) yr.textContent = String(new Date().getFullYear());
 
-  /* FAQ */
   $$(".faq-item").forEach((item) => {
     const btn = $("button", item);
     if (!btn) return;
@@ -121,13 +130,11 @@
     });
   });
 
-  /* Hero entrance settle */
   window.setTimeout(() => {
     $(".hero-anim")?.classList.add("is-ready");
     $(".hero-visual")?.classList.add("is-ready");
   }, 1100);
 
-  /* Scroll reveal */
   const reveals = $$(".reveal");
   if ("IntersectionObserver" in window) {
     const io = new IntersectionObserver(
