@@ -212,11 +212,36 @@ p { margin: 0; }
   display: inline-flex;
   align-items: center;
   gap: 10px;
+  flex-shrink: 0;
 }
 
+/* Generic / fallback brand mark */
 .brand img {
-  width: 108px;
-  height: 36px;
+  width: 120px;
+  height: auto;
+  max-height: 40px;
+  object-fit: contain;
+  object-position: left center;
+  display: block;
+  border-radius: 0;
+}
+
+/* Navbar wordmark — do not change */
+.site-header .brand img {
+  width: 200px;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  object-position: left center;
+}
+
+/* Footer wordmark only — same asset as navbar, larger prominence */
+.site-footer .brand img {
+  width: 200px;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  object-position: left center;
   border-radius: 10px;
 }
 
@@ -245,7 +270,8 @@ p { margin: 0; }
   transition: color .2s ease;
 }
 
-.nav-links a:hover { color: var(--navy); }
+.nav-links a:hover,
+.nav-links a.is-active { color: var(--navy); }
 
 .nav-links a::after {
   content: "";
@@ -1055,6 +1081,18 @@ body.nav-open { overflow: hidden; }
 
 /* Responsive */
 @media (max-width: 1024px) {
+  .site-header .brand img {
+    width: 172px;
+    height: auto;
+    max-height: none;
+  }
+
+  .site-footer .brand img {
+    width: 180px;
+    height: auto;
+    max-height: none;
+  }
+
   .hero-grid,
   .split,
   .captain-grid,
@@ -1070,6 +1108,20 @@ body.nav-open { overflow: hidden; }
 }
 
 @media (max-width: 768px) {
+  .site-header .brand img {
+    width: 170px;
+    height: auto;
+    max-height: none;
+  }
+
+  .site-footer .brand img {
+    width: 160px;
+    height: auto;
+    max-height: none;
+  }
+
+  .nav-bar { gap: 12px; }
+
   .nav-links,
   .nav-actions { display: none; }
   .burger { display: inline-flex; }
@@ -1090,6 +1142,18 @@ body.nav-open { overflow: hidden; }
 }
 
 @media (max-width: 480px) {
+  .site-header .brand img {
+    width: 148px;
+    height: auto;
+    max-height: none;
+  }
+
+  .site-footer .brand img {
+    width: 155px;
+    height: auto;
+    max-height: none;
+  }
+
   .container { width: min(100% - 28px, var(--container)); }
   .flow { grid-template-columns: 1fr; }
   .kpi-row { grid-template-columns: 1fr; }
@@ -1099,6 +1163,12 @@ body.nav-open { overflow: hidden; }
 }
 
 @media (max-width: 360px) {
+  .site-header .brand img {
+    width: 140px;
+    height: auto;
+    max-height: none;
+  }
+
   .hero-copy h1 { font-size: 2rem; }
   .announcement { font-size: 12px; padding-inline: 36px; }
 }

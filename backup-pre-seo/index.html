@@ -1,0 +1,502 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Transserve – A Complete Restaurant & Hospitality Platform</title>
+  <meta name="description" content="Transserve helps restaurants and hospitality teams manage orders, tables, billing, menus, rooms, bookings and Captain workflows from one platform.">
+  <meta name="theme-color" content="#FF315A">
+  <meta property="og:title" content="Transserve – A Complete Restaurant & Hospitality Platform">
+  <meta property="og:description" content="Orders, tables, billing, menus, rooms and Captain workflows in one modern platform.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://transserve.in/">
+  <meta property="og:image" content="./img/transserve-mark.svg">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Transserve">
+  <meta name="twitter:description" content="A Complete Restaurant & Hospitality Platform">
+  <link rel="icon" href="./img/Vibrant_Transserve_Gradient_Logo-removebg-preview.png" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Sora:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" defer></script>
+  <script src="./js/main.js" defer></script>
+</head>
+<body>
+  <div id="ann" class="announcement">
+    Transserve — a complete restaurant &amp; hospitality platform.
+    <button id="annx" type="button" aria-label="Dismiss announcement">×</button>
+  </div>
+
+  <header class="site-header">
+    <div class="nav-bar">
+      <a class="brand" href="#top" aria-label="Transserve home">
+        <img src="./img/Clean Transserve Brand Logo.svg" width="108" height="36" alt="Transserve">
+        <span></span>
+      </a>
+
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#product">Product</a>
+        <a href="#features">Features</a>
+        <a href="#solutions">Solutions</a>
+        <a href="#captain">Captain</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+
+      <div class="nav-actions">
+        <a class="login-link" data-cfg="login">Login</a>
+        <a class="btn btn-primary" data-cfg="register">Get Started</a>
+      </div>
+
+      <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="mnav">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <div class="mobile-nav" id="mnav">
+    <a href="#product">Product</a>
+    <a href="#features">Features</a>
+    <a href="#solutions">Solutions</a>
+    <a href="#captain">Captain</a>
+    <a href="#faq">FAQ</a>
+    <div class="mobile-cta">
+      <a class="btn btn-secondary" data-cfg="login">Login</a>
+      <a class="btn btn-primary" data-cfg="register">Get Started</a>
+    </div>
+  </div>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy hero-anim">
+          <div class="pill"><i aria-hidden="true"></i> A Complete Restaurant &amp; Hospitality Platform</div>
+          <h1>Run service smoothly. Keep the floor under control.</h1>
+          <p class="lead">Transserve brings orders, tables, billing, menus and hospitality operations into one clear workspace—so your team can serve faster with less chaos.</p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" data-cfg="register">Get Started</a>
+            <a class="btn btn-secondary" href="#product">See the product</a>
+          </div>
+          <div class="hero-proof">
+            <span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              Owner dashboard + Captain app
+            </span>
+            <span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+              POS, tables &amp; billing
+            </span>
+          </div>
+        </div>
+
+        <div class="hero-visual" aria-hidden="false">
+          <div class="device-frame" role="img" aria-label="Illustrative Transserve dashboard preview with sample data">
+            <div class="device-chrome">
+              <div class="dots" aria-hidden="true"><i></i><i></i><i></i></div>
+              <div class="url">portal.transserve.in / overview</div>
+            </div>
+            <div class="dashboard-mock">
+              <div class="dash-top">
+                <strong>Today’s overview</strong>
+                <span class="dash-badge">Sample data</span>
+              </div>
+              <div class="kpi-row">
+                <div class="kpi"><label>Orders</label><b>24</b></div>
+                <div class="kpi"><label>Active tables</label><b>5/8</b></div>
+                <div class="kpi"><label>Sales</label><b>₹18,450</b></div>
+              </div>
+              <div class="dash-panels">
+                <div class="panel">
+                  <h4>Live orders</h4>
+                  <div class="order-row"><span><b>#1042</b> · Table 4</span><span class="status warn">Preparing</span></div>
+                  <div class="order-row"><span><b>#1043</b> · Table 7</span><span class="status info">New</span></div>
+                  <div class="order-row"><span><b>#1044</b> · Takeaway</span><span class="status ok">Ready</span></div>
+                </div>
+                <div class="panel">
+                  <h4>Tables</h4>
+                  <div class="table-grid">
+                    <div class="table-cell ok">1</div>
+                    <div class="table-cell warn">2</div>
+                    <div class="table-cell ok">3</div>
+                    <div class="table-cell warn">4</div>
+                    <div class="table-cell ok">5</div>
+                    <div class="table-cell ok">6</div>
+                    <div class="table-cell info">7</div>
+                    <div class="table-cell ok">8</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="float-note">Bill · Table 4 · ₹1,240</div>
+        </div>
+      </div>
+    </section>
+
+    <div class="trust">
+      <div class="container trust-inner">
+        <p>Built for daily restaurant and hospitality operations</p>
+        <div class="trust-pills">
+          <span>Live orders</span>
+          <span>POS &amp; billing</span>
+          <span>Table monitor</span>
+          <span>Captain app</span>
+          <span>Rooms &amp; bookings</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- FEATURES BENTO -->
+    <section class="section section-soft" id="features">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Capabilities</p>
+          <h2>Everything your floor and counter need</h2>
+          <p>One platform for the daily work of running a restaurant or café. Feature availability may vary by plan.</p>
+        </div>
+
+        <div class="bento">
+          <article class="bento-card wide reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h12M8 12h12M8 18h12M3 6h.01M3 12h.01M3 18h.01"/></svg>
+            </div>
+            <h3>Live Order Management</h3>
+            <p>Track new, preparing and ready orders as they move through your restaurant.</p>
+            <div class="mini-ui">
+              <div class="order-row"><span><b>#1045</b> · Table 2</span><span class="status info">New</span></div>
+              <div class="order-row"><span><b>#1044</b> · Table 4</span><span class="status warn">Cooking</span></div>
+              <div class="order-row"><span><b>#1043</b> · Table 7</span><span class="status ok">Ready</span></div>
+            </div>
+          </article>
+
+          <article class="bento-card tall reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 2h12v20l-3-2-3 2-3-2-3 2zM9 8h6M9 12h6"/></svg>
+            </div>
+            <h3>Billing and POS</h3>
+            <p>Generate bills quickly and keep billing organized for dine-in and takeaway.</p>
+          </article>
+
+          <article class="bento-card mid reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 3h7v7H3zM14 3h7v7h-7zM3 14h7v7H3zM14 14h7v7h-7z"/></svg>
+            </div>
+            <h3>Table Management</h3>
+            <p>See which tables are occupied or free at a glance.</p>
+          </article>
+
+          <article class="bento-card mid reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4h16v4H4zM4 12h10M4 16h10M4 20h10"/></svg>
+            </div>
+            <h3>Menu Management</h3>
+            <p>Update items, categories and prices from one place.</p>
+          </article>
+
+          <article class="bento-card mid reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 12a4 4 0 100-8 4 4 0 000 8zM4 21a8 8 0 0116 0"/></svg>
+            </div>
+            <h3>Captain Workflow</h3>
+            <p>Let service staff handle assigned orders from their Android device.</p>
+          </article>
+
+          <article class="bento-card mid reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 6h20v12H2zM2 10h20M6 15h4"/></svg>
+            </div>
+            <h3>Payment Tracking</h3>
+            <p>Record and review payments against each bill.</p>
+          </article>
+
+          <article class="bento-card mid reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12V3h9l9 9-9 9zM7.5 7.5h.01"/></svg>
+            </div>
+            <h3>Offers and Discounts</h3>
+            <p>Set up offers and apply discounts at billing time.</p>
+          </article>
+
+          <article class="bento-card mid reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg>
+            </div>
+            <h3>Sales Analytics</h3>
+            <p>Review available sales information to understand your business.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRODUCT SHOWCASE -->
+    <section class="section" id="product">
+      <div class="container split">
+        <div class="split-copy reveal">
+          <p class="eyebrow">Owner dashboard</p>
+          <h2>Stay in control of your restaurant.</h2>
+          <p style="margin-top:14px;color:var(--muted);font-size:1.05rem;">Live orders, table monitoring, billing and payments, menu management and a sales overview—together in one owner dashboard.</p>
+          <ul class="check-list">
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg> Live orders</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg> Table monitoring</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg> Billing and payments</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg> Menu management</li>
+            <li><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg> Sales overview</li>
+          </ul>
+          <div style="margin-top:28px;">
+            <a class="btn btn-primary" data-cfg="login">Access Restaurant Dashboard</a>
+          </div>
+        </div>
+        <div class="split-visual reveal">
+          <div class="visual-card">
+            <div class="dash-top">
+              <strong>Service pulse</strong>
+              <span class="dash-badge">Illustrative</span>
+            </div>
+            <div class="bars" aria-hidden="true">
+              <span style="height:42%"></span>
+              <span style="height:68%"></span>
+              <span style="height:54%"></span>
+              <span style="height:86%"></span>
+              <span style="height:60%"></span>
+              <span style="height:74%"></span>
+              <span style="height:48%"></span>
+              <span style="height:92%"></span>
+            </div>
+            <div class="order-row" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;">
+              <span class="status ok">Table 6 free</span>
+              <span><b>Order #1051</b></span>
+              <span class="status info">+ ₹450 paid</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTIONS: Restaurant / Hotel / Resort -->
+    <section class="section section-soft" id="solutions">
+      <div class="container">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Solutions</p>
+          <h2>Built for restaurants, hotels and resorts</h2>
+          <p>Choose the operating model that matches your business. Capabilities depend on your subscription plan.</p>
+        </div>
+        <div class="category-grid">
+          <article class="category-card reveal">
+            <p class="eyebrow">Restaurant</p>
+            <h3>Floor &amp; counter operations</h3>
+            <p>Run dine-in and takeaway service from one dashboard.</p>
+            <ul>
+              <li>Counter POS and live orders</li>
+              <li>Menu catalog and offers</li>
+              <li>Table monitor and billing</li>
+              <li>Captain app for service staff</li>
+            </ul>
+          </article>
+          <article class="category-card reveal">
+            <p class="eyebrow">Hotel</p>
+            <h3>Rooms &amp; guest stays</h3>
+            <p>Manage hospitality workflows alongside secure guest records.</p>
+            <ul>
+              <li>Room management</li>
+              <li>Bookings and check-in flow</li>
+              <li>Guest profiles</li>
+              <li>Room QR and room billing / folio</li>
+            </ul>
+          </article>
+          <article class="category-card reveal">
+            <p class="eyebrow">Resort</p>
+            <h3>Restaurant + hotel together</h3>
+            <p>Combine dining and stay operations under one tenant account.</p>
+            <ul>
+              <li>Restaurant tier features</li>
+              <li>Hotel tier features</li>
+              <li>Shared staff and profile tools</li>
+              <li>Plan-based entitlements</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW -->
+    <section class="section" id="how">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Getting started</p>
+          <h2>How Transserve works</h2>
+        </div>
+        <div class="steps">
+          <article class="step-card reveal">
+            <h3>Set up your restaurant and menu</h3>
+            <p>Add your restaurant details, categories and menu items.</p>
+          </article>
+          <article class="step-card reveal">
+            <h3>Manage orders, tables and billing</h3>
+            <p>Run daily operations from the restaurant dashboard.</p>
+          </article>
+          <article class="step-card reveal">
+            <h3>Coordinate service staff</h3>
+            <p>Use the Captain app to keep table service in sync.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPTAIN -->
+    <section class="section section-soft" id="captain">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Captain app</p>
+          <h2>Your service team, connected.</h2>
+          <p>Help your captain and service staff manage table orders and restaurant workflows from their Android device.</p>
+        </div>
+        <div class="captain-grid">
+          <article class="app-card reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l2-5h14l2 5M4 9v11h16V9M9 20v-6h6v6"/></svg>
+            </div>
+            <h3>Restaurant Owner Panel</h3>
+            <p>Manage restaurant operations, orders, menu, billing and staff from the web dashboard.</p>
+            <div class="app-actions">
+              <a class="btn btn-primary" data-cfg="login">Open Owner Login</a>
+              <a class="btn btn-secondary" data-cfg="register">Get Started</a>
+            </div>
+          </article>
+          <article class="app-card reveal">
+            <div class="icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 2h10v20H7zM11 18h2"/></svg>
+            </div>
+            <h3>Transserve Captain App</h3>
+            <p>Give your service staff a convenient mobile workflow for handling assigned restaurant orders and table service.</p>
+            <div class="app-actions">
+              <a class="btn btn-primary" id="apkbtn" href="#">Download Captain APK</a>
+              <a class="btn btn-secondary" id="capLogin" data-cfg="captainLogin">Open Captain Login</a>
+            </div>
+            <div class="qr-row" id="qrwrap">
+              <div id="qr"></div>
+              <p>Scan to download on your Android device.</p>
+            </div>
+            <p style="margin-top:14px;font-size:12px;color:var(--muted);">Download the APK on your Android device and follow the installation instructions shown by your device.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- FLOW -->
+    <section class="section" id="flow">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Workflow</p>
+          <h2>From order to payment, in one flow</h2>
+        </div>
+        <ol class="flow">
+          <li class="flow-item reveal"><div class="n">Step 1</div><h3>New Order</h3><p>Order is placed</p></li>
+          <li class="flow-item reveal"><div class="n">Step 2</div><h3>Preparation</h3><p>Track order status</p></li>
+          <li class="flow-item reveal"><div class="n">Step 3</div><h3>Captain Service</h3><p>Staff serves the table</p></li>
+          <li class="flow-item reveal"><div class="n">Step 4</div><h3>Bill Generation</h3><p>Bill is created</p></li>
+          <li class="flow-item reveal"><div class="n">Step 5</div><h3>Payment</h3><p>Payment is recorded</p></li>
+        </ol>
+        <p style="margin-top:16px;font-size:12px;color:var(--muted);">Payments are recorded by your team; opening a UPI link is not treated as verified payment.</p>
+      </div>
+    </section>
+
+    <!-- BENEFITS -->
+    <section class="section section-soft" id="benefits">
+      <div class="container">
+        <div class="section-head reveal">
+          <p class="eyebrow">Benefits</p>
+          <h2>Practical benefits for daily service</h2>
+        </div>
+        <div class="benefit-grid">
+          <div class="benefit reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Keep orders organized</div>
+          <div class="benefit reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Simplify restaurant billing</div>
+          <div class="benefit reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Improve coordination between staff</div>
+          <div class="benefit reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Monitor table activity</div>
+          <div class="benefit reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Manage menus from one place</div>
+          <div class="benefit reveal"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><polyline points="20 6 9 17 4 12"/></svg>Review available sales information</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ -->
+    <section class="section" id="faq">
+      <div class="container">
+        <div class="section-head center reveal">
+          <p class="eyebrow">Support</p>
+          <h2>Frequently asked questions</h2>
+        </div>
+        <div class="faq-list">
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">What is Transserve?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>Transserve is a complete restaurant and hospitality platform for handling orders, tables, billing and menu management from one place.</p></div></div>
+          </div>
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">Which types of restaurants can use Transserve?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>It is designed for restaurants, cafés and other small and medium-sized food businesses. Hotel and resort plans are available for hospitality operations.</p></div></div>
+          </div>
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">How can a restaurant owner get started?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>Use the “Get Started” button to register, then set up your restaurant and menu from the dashboard.</p></div></div>
+          </div>
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">What is the Captain app used for?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>Captains and service staff use it on Android to handle assigned orders and table service.</p></div></div>
+          </div>
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">How can I download the Captain APK?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>Use the “Download Captain APK” button in the Captain section when it is available, then follow your device’s installation prompts.</p></div></div>
+          </div>
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">Can I use Transserve from a mobile device?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>The owner dashboard is a web app and the layout adapts to mobile screens. The Captain app is for Android.</p></div></div>
+          </div>
+          <div class="faq-item reveal">
+            <h3><button type="button" aria-expanded="false">How can I contact the Transserve team?<svg class="chev" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button></h3>
+            <div class="faq-panel"><div><p>Use the Contact Us link in the footer to email the Transserve team.</p></div></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FINAL CTA -->
+    <section class="section">
+      <div class="container">
+        <div class="cta-band reveal">
+          <h2>Make your restaurant operations simpler.</h2>
+          <p>Explore Transserve and bring your restaurant workflows into one organized platform.</p>
+          <div class="cta-actions">
+            <a class="btn btn-primary" data-cfg="register">Get Started</a>
+            <a class="btn btn-ghost" data-cfg="login">Access Owner Panel</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-grid">
+      <div>
+        <a class="brand" href="#top" aria-label="Transserve home">
+          <img src="./img/Clean Transserve Brand Logo.svg" width="108" height="36" alt="Transserve">
+          <span></span>
+        </a>
+        <p>A complete restaurant &amp; hospitality platform for orders, tables, billing, menus and guest operations.</p>
+      </div>
+      <div>
+        <h4>Product</h4>
+        <a href="#features">Features</a>
+        <a href="#how">How It Works</a>
+        <a href="#solutions">Solutions</a>
+        <a href="#captain">Captain App</a>
+        <a data-cfg="login">Owner Login</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul id="flinks"></ul>
+      </div>
+    </div>
+    <p class="copyright">© <span id="yr"></span> Transserve. All rights reserved.</p>
+  </footer>
+</body>
+</html>

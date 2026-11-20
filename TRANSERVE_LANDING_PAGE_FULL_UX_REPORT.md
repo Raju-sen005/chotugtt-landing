@@ -39,7 +39,7 @@ Backup preserved at: `backup-pre-full-ux/`
 | `css/main.css` | New design system, layouts, responsive, motion |
 | `js/main.js` | Nav, FAQ, CFG links, APK/QR, scroll reveals |
 | `img/transserve-mark.svg` | Brand mark (kept) |
-| `img/favicon.svg` | Favicon (kept) |
+| `img/Vibrant_Transserve_Gradient_Logo-removebg-preview.png` | Favicon (kept) |
 | `css/transserve.css` | Superseded (no longer linked) |
 | `js/transserve-ui.js` | Superseded (no longer linked) |
 | `backup-pre-full-ux/` | Pre-rewrite backup |

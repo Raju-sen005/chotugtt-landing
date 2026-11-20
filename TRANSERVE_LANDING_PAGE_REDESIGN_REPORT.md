@@ -43,7 +43,7 @@ Checkpoint: `index.html.pre-redesign.bak` + git branch `transserve-redesign-chec
 | `css/transserve.css` | **New** — Transserve design system, gradient CTAs, motion, sticky header, overflow fixes |
 | `js/transserve-ui.js` | **New** — sticky scroll state + light theme lock |
 | `img/transserve-mark.svg` | **New** — colored brand mark (readable on light UI) |
-| `img/favicon.svg` | **New** |
+| `img/Vibrant_Transserve_Gradient_Logo-removebg-preview.png` | **New** |
 | `TRANSERVE_LANDING_PAGE_INITIAL_AUDIT.md` | **New** |
 | `index.html.pre-redesign.bak` | Pre-redesign backup |
 
