@@ -71,7 +71,7 @@ landing/
 | `ChotuGTT__1_-removebg-preview.png` | Legacy; not referenced in current HTML body |
 | Footer image `./img/Transserve__1_-removebg-preview.png` | **Broken / missing file** |
 | CFG login/register | Still `https://chotu-frontend-ngph.onrender.com/` (functional URL) |
-| CFG contactEmail | `chotupro.official@gmail.com` (legacy mailbox name) |
+| CFG contactEmail | `support@transserve.in` (legacy mailbox name) |
 
 ---
 
