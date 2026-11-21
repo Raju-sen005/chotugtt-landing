@@ -70,7 +70,7 @@ landing/
 | `Clean Transserve Brand Logo.svg` | White/near-white artwork — poor contrast on light navbar |
 | `ChotuGTT__1_-removebg-preview.png` | Legacy; not referenced in current HTML body |
 | Footer image `./img/Transserve__1_-removebg-preview.png` | **Broken / missing file** |
-| CFG login/register | Still `https://chotu-frontend-ngph.onrender.com/` (functional URL) |
+| CFG login/register | Still `https://portal.transserve.in/` (functional URL) |
 | CFG contactEmail | `support@transserve.in` (legacy mailbox name) |
 
 ---

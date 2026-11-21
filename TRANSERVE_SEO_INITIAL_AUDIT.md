@@ -34,7 +34,7 @@ landing/
 |------|-------|------------|
 | Production hostname | `transserve.in` (from `CNAME`) | Verified in repo |
 | Canonical origin (assumed) | `https://transserve.in` | Hostname verified; HTTPS scheme assumed for public site |
-| Owner login / register | `https://chotu-frontend-ngph.onrender.com/` (+ `/subscription-checkout`) | Present in `js/main.js` CFG |
+| Owner login / register | `https://portal.transserve.in/` (+ `/subscription-checkout`) | Present in `js/main.js` CFG |
 | Contact email | `support@transserve.in` | Present in CFG |
 | Captain APK | Expo build URL in CFG | Present |
 | WhatsApp business number | **Not found** | **OWNER INPUT REQUIRED** |

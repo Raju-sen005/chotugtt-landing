@@ -5,8 +5,8 @@
   "use strict";
 
   const CFG = {
-    login: "https://chotu-frontend-ngph.onrender.com/",
-    register: "https://chotu-frontend-ngph.onrender.com/subscription-checkout",
+    login: "https://portal.transserve.in/",
+    register: "https://portal.transserve.in/subscription-checkout",
     captainLogin: "",
     apkUrl:
       "https://expo.dev/accounts/raju005/projects/captain-app/builds/25829aac-479a-465b-8443-23094ae79b02",

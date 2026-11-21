@@ -7,10 +7,10 @@
 
   const SITE = window.TRANSERVE_CONFIG || {};
   const CFG = {
-    login: SITE.loginUrl || "https://chotu-frontend-ngph.onrender.com/",
+    login: SITE.loginUrl || "https://portal.transserve.in/",
     register:
       SITE.registerUrl ||
-      "https://chotu-frontend-ngph.onrender.com/subscription-checkout",
+      "https://portal.transserve.in/subscription-checkout",
     captainLogin: SITE.captainLoginUrl || "",
     apkUrl:
       SITE.apkUrl ||

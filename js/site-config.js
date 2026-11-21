@@ -6,8 +6,8 @@ window.TRANSERVE_CONFIG = {
   siteOrigin: "https://transserve.in",
   defaultLang: "en",
   contactEmail: "support@transserve.in",
-  loginUrl: "https://chotu-frontend-ngph.onrender.com/",
-  registerUrl: "https://chotu-frontend-ngph.onrender.com/subscription-checkout",
+  loginUrl: "https://portal.transserve.in/",
+  registerUrl: "https://portal.transserve.in/subscription-checkout",
   captainLoginUrl: "",
   apkUrl:
     "https://expo.dev/accounts/raju005/projects/captain-app/builds/25829aac-479a-465b-8443-23094ae79b02",
